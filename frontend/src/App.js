@@ -10,7 +10,6 @@ import Bookings from "./components/CustomerBookingPage.js";
 import SupplierBookings from "./components/SupplierBookingPage.js";
 import PrivacyPolicy from "./components/desc/PrivacyPolicy.js";
 import TermsOfService from "./components/desc/TermsOfService.js";
-import ContactUs from "./components/desc/ContactUs.js";
 import AboutUs from "./components/desc/AboutUs.js";
 import AllActivities from "./components/displayall/AllActivities.js";
 import AllTours from "./components/displayall/AllTours.js";
@@ -21,6 +20,7 @@ import Favorites from "./components/Favorites.js";
 import NotificationsPage from "./components/NotificationsPage.js";
 import PostList from './components/PostList';
 import PostDetail from './components/PostDetail';
+import ContactUs from "./components/desc/ContactUs.js";
 
 function App() { 
     return (
@@ -48,8 +48,8 @@ function App() {
                 />
                 <Route path="/privacy-policy/" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service/" element={<TermsOfService />} />
-                <Route path="/contact-us/" element={<ContactUs />} />
                 <Route path="/about-us/" element={<AboutUs />} />
+                <Route path="/contact-us/" element={<ContactUs />} />
                 <Route path="/all-activities/" element={<AllActivities />} />
                 <Route path="/all-packages/" element={<AllPackages />} />
                 <Route path="/all-tours/" element={<AllTours />} />

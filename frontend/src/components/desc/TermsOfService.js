@@ -47,7 +47,7 @@ const TermsOfService = () => {
 
             <h2>7. Governing Law</h2>
             <p>
-                These terms shall be governed and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law provisions.
+                These terms shall be governed and construed in accordance with the laws of Lebanon, without regard to its conflict of law provisions.
             </p>
 
             <h2>8. Changes to Terms</h2>

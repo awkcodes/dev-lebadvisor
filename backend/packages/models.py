@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import Supplier
-from categories.models import Category
-from location.models import Location
+from categories.models import Category, SubCategory
+from location.models import Location, SubLocation
 from datetime import timedelta
 
 
@@ -30,6 +30,8 @@ class Package(models.Model):
     min_age = models.IntegerField(blank=True, null=True)
     cancellation_policy = models.TextField(blank=True, null=True)
     additional_info = models.TextField(blank=True, null=True)
+    subcategories = models.ManyToManyField(SubCategory, related_name="packages", blank=True)
+    sublocations = models.ManyToManyField(SubLocation, related_name="packages", blank=True)
 
     def create_package_days(self):
         if not self.days_off:

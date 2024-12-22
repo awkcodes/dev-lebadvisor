@@ -1,7 +1,7 @@
 from django.db import models
-from categories.models import Category
+from categories.models import Category, SubCategory
 from users.models import Supplier
-from location.models import Location
+from location.models import Location, SubLocation
 from datetime import timedelta
 
 
@@ -32,6 +32,10 @@ class Tour(models.Model):
     min_age = models.IntegerField(blank=True, null=True)
     cancellation_policy = models.TextField(blank=True, null=True)
     additional_info = models.TextField(blank=True, null=True)
+    participant_age_range = models.CharField(max_length=50, blank=True, null=True)
+    subcategories = models.ManyToManyField(SubCategory, related_name="tours", blank=True)
+    sublocations = models.ManyToManyField(SubLocation, related_name="tours", blank=True)
+
 
     def create_tour_days(self):
         if not self.days_off:

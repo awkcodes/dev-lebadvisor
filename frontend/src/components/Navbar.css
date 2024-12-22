@@ -97,6 +97,53 @@
       overflow-wrap: break-word; /* Ensure long words break to fit within the container */
     }
   }
+
+.desktop-menu {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.desktop-menu .MuiButton-root {
+  color: #017599;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.desktop-menu .MuiButton-root:hover {
+  color: #f58529;
+  background-color: rgba(245, 133, 41, 0.04);
+}
+
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.mobile-menu-button {
+  display: none !important;
+}
+
+@media screen and (max-width: 600px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .mobile-menu-button {
+    display: block !important;
+    margin-left: auto;
+  }
+
+  .auth-section {
+    margin-right: 10px;
+  }
+
+  .navbar {
+    padding: 10px;
+  }
+}
   
 .register-button {
   font-size: 16px !important; /* Default size */
@@ -113,4 +160,14 @@
     margin: 15px auto !important; /* Center the button */
     display: block !important; /* Ensure block display */
   }
+}
+
+/* Mobile menu items color */
+.nav-menu .MuiMenuItem-root {
+  color: #017599;
+}
+
+.nav-menu .MuiMenuItem-root:hover {
+  color: #f58529;
+  background-color: rgba(245, 133, 41, 0.04);
 }

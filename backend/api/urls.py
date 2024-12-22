@@ -1,5 +1,5 @@
 from django.urls import path, include
-from categories.views import get_categories
+from categories.views import get_categories, get_subcategories
 from rest_framework.routers import DefaultRouter  # <-- Add this line
 from booking.views import (
     activity_booking_create,
@@ -50,7 +50,7 @@ from tours.views import (
     reserve_tour,
     block_tourday,
 )
-from location.views import get_locations
+from location.views import get_locations, get_sublocations
 from notifications.views import notification_list, mark_notification_as_read
 from .views import latest_items_api, featured_items_api, search, for_you_items
 from favorites.views import (
@@ -95,7 +95,9 @@ urlpatterns = [
         name="read_notification",
     ),
     path("categories/", get_categories, name="get_categories"),
+    path("subcategories/", get_subcategories, name="get_subcategories"),
     path("locations/", get_locations, name="get_locations"),
+    path("sublocations/", get_sublocations, name="get_sublocations"),
     path("activities/", get_activities, name="get_activities"),
     path("all-tours/", get_all_tours, name="get_all_tours"),
     path("all-packages/", get_all_packages, name="get_all_packages"),

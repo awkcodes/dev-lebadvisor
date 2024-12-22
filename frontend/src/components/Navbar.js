@@ -16,6 +16,7 @@ import AuthPopup from './AuthPopup';
 import api from '../services/api.js';
 import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const Logo = styled('img')({
   cursor: 'pointer',
@@ -29,6 +30,8 @@ const Navbar = () => {
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -108,7 +111,21 @@ const Navbar = () => {
     setNotificationAnchorEl(null);
   };
 
-  const navigate = useNavigate();
+  const handleMobileMenuOpen = (event) => {
+    setMobileAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileAnchorEl(null);
+  };
+
+  const mainNavItems = (
+    <div className="desktop-menu">
+      <Button color="inherit" onClick={() => navigate('/blog')}>Blog</Button>
+      <Button color="inherit" onClick={handleAboutUs}>About Us</Button>
+      <Button color="inherit" onClick={() => navigate('/contact-us')}>Contact Us</Button>
+    </div>
+  );
 
   return (
     <AppBar 
@@ -126,38 +143,62 @@ const Navbar = () => {
           />
         </Typography>
 
+        <IconButton
+          className="mobile-menu-button"
+          onClick={handleMobileMenuOpen}
+          sx={{ marginRight: '10px' }}
+        >
+          <MenuIcon style={{ color: '#017599' }} />
+        </IconButton>
+
+        <Menu
+          className='nav-menu'
+          anchorEl={mobileAnchorEl}
+          open={Boolean(mobileAnchorEl)}
+          onClose={handleMobileMenuClose}
+        >
+          <MenuItem onClick={() => { navigate('/blog'); handleMobileMenuClose(); }}>
+            Blog
+          </MenuItem>
+          <MenuItem onClick={() => { handleAboutUs(); handleMobileMenuClose(); }}>
+            About Us
+          </MenuItem>
+          <MenuItem onClick={() => { navigate('/contact-us'); handleMobileMenuClose(); }}>
+            Contact Us
+          </MenuItem>
+        </Menu>
+
+        {mainNavItems}
+
         {loggedInUser ? (
           <div>
             <IconButton
-              size="large"
-              edge="end"
-              aria-label="notifications"
-              aria-controls="notification-menu"
-              aria-haspopup="true"
+              className="notification-button"
               onClick={handleNotificationOpen}
-              style={{
-                  color:"white",
-                  backgroundColor:"#017599",
-                  padding:"9px", 
-                  marginRight:"10px",
-              }}
             >
-              <Badge className='not-icon' badgeContent={unreadCount > 10 ? '10+' : unreadCount} color="error">
-                <NotificationsIcon />
+              <Badge badgeContent={unreadCount} color="error">
+                <NotificationsIcon className="not-icon" />
               </Badge>
             </IconButton>
-            <Menu className='nav-menu'
-              id="notification-menu"
+            <IconButton onClick={handleMenu}>
+              <Avatar className='user-icon'>{loggedInUser[0].toUpperCase()}</Avatar>
+            </IconButton>
+            <Menu
+              className='nav-menu'
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
+              <MenuItem onClick={handleBookingOpen}>Bookings</MenuItem>
+              <MenuItem onClick={handleFavoritesOpen}>Favorites</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+
+            {/* Notifications Menu */}
+            <Menu
+              className='nav-menu'
               anchorEl={notificationAnchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
               open={Boolean(notificationAnchorEl)}
               onClose={handleNotificationClose}
             >
@@ -181,43 +222,6 @@ const Navbar = () => {
               >
                 Read all
               </MenuItem>
-            </Menu>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <Avatar className='user-icon'
-                  style={{
-                      backgroundColor:"#f58529"
-                  }}
-              >{loggedInUser[0].toUpperCase()}</Avatar>
-            </IconButton>
-            <Menu className='nav-menu'
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem className='menu-item' onClick={handleProfileOpen}>Profile</MenuItem>
-              <MenuItem className='menu-item' onClick={handleBookingOpen}>Bookings</MenuItem>
-              <MenuItem className='menu-item' onClick={handleFavoritesOpen}>Favorites</MenuItem>
-              <MenuItem className='menu-item' onClick={() => navigate('/blog')}>Blog</MenuItem> {/* Add Blog MenuItem */}
-              <MenuItem className='menu-item' onClick={handleAboutUs}>About Us</MenuItem>
-              <MenuItem className='menu-item' onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
         ) : (

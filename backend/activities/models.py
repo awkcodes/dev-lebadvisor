@@ -3,6 +3,8 @@ from users.models import Supplier
 from categories.models import Category
 from location.models import Location
 from datetime import datetime, timedelta
+from categories.models import SubCategory
+from location.models import SubLocation
 
 
 class Activity(models.Model):
@@ -41,6 +43,8 @@ class Activity(models.Model):
     cancellation_policy = models.TextField(blank=True, null=True)
     group_size = models.CharField(max_length=50, blank=True, null=True)
     participant_age_range = models.CharField(max_length=50, blank=True, null=True)
+    subcategories = models.ManyToManyField(SubCategory, related_name="activities", blank=True)
+    sublocations = models.ManyToManyField(SubLocation, related_name="activities", blank=True)
 
     class Meta:
         verbose_name_plural = "activities"
@@ -74,7 +78,6 @@ class Activity(models.Model):
                     period_start_time = period_end_time
                     period_end_time = period_start_time + period_duration
                 current_date += delta
-
 
 class ActivityOffer(models.Model):
     activity = models.ForeignKey(
