@@ -1,173 +1,298 @@
-.main-page {
-  padding: 0px;
-  background-color: #f3f4f6;
-  font-family: 'Arial', sans-serif;
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.banner-main {
+/* Import simple fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+  font-family: "Roboto", sans-serif;
+  background: #f7f7f7;
+  color: #333;
+}
+
+.main-page {
   width: 100%;
-  height: 400px;
-  background-image: url("./media/banner.jpg");
-  background-color: rgba(0,0,0,0.5);
-  background-size: cover;
-  background-position: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Banner */
+.banner {
   position: relative;
+  width: 100%;
+  height: 80vh !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 60px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: #1781a1;
+  background-image: url('./media/test.jpg') !important;
+  background-size: cover;
+  background-position: center !important;
+  overflow: hidden;
 }
 
+/* Rotating gradient layers */
+.banner-bg-layer,
+.banner-bg-layer2,
+.banner-bg-layer3 {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: -10%;
+  left: -10%;
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: rotateAnim 20s linear infinite;
+  background: radial-gradient(circle, #f58529 10%, #017599 90%);
+}
+
+.banner-bg-layer2 {
+  animation-duration: 25s;
+  animation-direction: reverse;
+}
+.banner-bg-layer3 {
+  animation-duration: 35s;
+  opacity: 0.2;
+}
+
+@keyframes rotateAnim {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Banner content */
 .banner-content {
+  position: relative;
   text-align: center;
-  color: white;
+  z-index: 2;
 }
 
-.banner-text {
-  font-size: 58px;
-  padding: 20px 40px;
-  border-radius: 10px;
-  font-family: 'Georgia', serif;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  font-weight: 700;
+/* Import the necessary fonts */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;500&display=swap');
+
+/* Existing banner styles */
+.banner-title {
+  font-family: 'blippo,fantasy'; /* Match logo's font family */
+  font-weight: 700; /* Bolder font weight similar to logo */
+  font-size: 3.2rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ffffff;
 }
 
-.banner-subtext {
-  font-size: 28px;
-  margin-top: 10px;
-  font-family: 'Arial', sans-serif;
-  padding: 10px 20px;
-  border-radius: 10px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  font-weight: 500;
+.banner-subtitle {
+  font-family: 'blippo,fantasy'; /* Match logo's font family */
+  font-weight: 500; /* Slightly bolder for prominence */
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+  color: #ffffff;
 }
 
-.banner-buttons {
-  margin-top: 20px;
-  display: flex;
-  gap: 20px;
-  justify-content: center;
+/* Responsive adjustments for mobile devices */
+@media (max-width: 600px) {
+  .banner-title {
+    font-size: 2rem; /* Smaller title on mobile */
+    margin-bottom: 0.8rem;
+    letter-spacing: 1px; /* Reduced spacing for smaller screens */
+  }
+  
+  .banner-subtitle {
+    font-size: 1.2rem; /* Smaller subtitle on mobile */
+    margin-bottom: 1.5rem;
+  }
 }
 
 .banner-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: white;
-  background-color: #1781a1;
+  font-size: 1.1rem;
+  padding: 0.9rem 1.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
+  background: #017599;
+  color: #fff;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: 0.3s;
 }
-
 .banner-button:hover {
-  background-color: #0056b3;
+  background: #f58529;
   transform: scale(1.05);
 }
 
-.banner-button-icon {
-  margin-right: 10px;
+/* Responsive Banner Title on Mobile */
+@media (max-width: 600px) {
+  .banner {
+    height: 50vh; /* Slightly less tall on mobile */
+  }
+
+  .banner-button {
+    font-size: 1rem;
+    padding: 0.7rem 1.2rem;
+  }
 }
 
+/* Search bar */
+.search-bar-container {
+  width: 80%;
+  margin: 2rem auto;
+}
+
+/* Navigation Cards */
+.navigation-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 80%;
+  margin: 0 auto 3rem auto;
+}
+
+.nav-card {
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  border-radius: 12px;
+  text-align: center;
+  padding: 2rem 1rem;
+  cursor: pointer;
+  border: 3px solid #017599;
+  transition: transform 0.3s, background 0.3s, border-color 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+.nav-card:hover {
+  transform: translateY(-5px);
+  background: #017599;
+  border-color: #f58529;
+}
+.nav-card h3 {
+  font-size: 1.3rem;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  color: #017599;
+}
+.nav-card:hover h3 {
+  color: #fff;
+}
+.nav-icon {
+  font-size: 3rem;
+  color: #017599;
+  transition: color 0.3s;
+}
+.nav-card:hover .nav-icon {
+  color: #fff;
+}
+
+/* Smaller nav-cards on mobile */
+@media (max-width: 600px) {
+  .navigation-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  .nav-card {
+    width: 80%;
+    margin-bottom: 1rem;
+    padding: 1.5rem;
+  }
+  .nav-card h3 {
+    font-size: 1.1rem;
+  }
+  .nav-icon {
+    font-size: 2.2rem;
+  }
+}
+
+/* Sections */
 .section {
-  padding: 0 60px;
-  padding-bottom: 40px;
+  position: relative;
+  padding: 3rem 1rem;
+  width: 90%;
+  margin: 0 auto 3rem auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  background: #fafafa;
 }
 
-.featured {
-  background-image: url('./media/featured.jpg');
-  padding: 40px 60px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  box-shadow: inset 0 0 0 2000px rgba(255, 182, 73, 0.712);
+/* Subtle background for each section */
+.section-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.1;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-.featured .section-title {
-  color: white;
-  font-weight: 700;
+.section-featured .section-bg {
+  background: conic-gradient(
+    from 180deg,
+    #017599,
+    #f58529,
+    #017599,
+    #f58529
+  );
+  clip-path: polygon(0 0, 100% 0, 100% 80%, 70% 90%, 30% 95%, 0 90%);
+}
+
+.section-family-picks .section-bg {
+  background: repeating-radial-gradient(
+    circle,
+    #f58529 0%,
+    #f58529 10%,
+    #017599 10%,
+    #017599 20%
+  );
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 85%);
+}
+
+.section-seasonal-highlights .section-bg {
+  background: linear-gradient(
+    60deg,
+    #f58529 0%,
+    #ffbc84 25%,
+    #017599 80%
+  );
+  clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%);
+}
+
+.section-local-favorites .section-bg {
+  background: repeating-linear-gradient(
+    45deg,
+    #017599,
+    #017599 20px,
+    #f58529 20px,
+    #f58529 40px
+  );
+  clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 100%);
+}
+
+.section:hover .section-bg {
+  opacity: 0.2;
 }
 
 .section-title {
-  font-size: 36px;
-  margin-bottom: 20px;
-  color: #ff7a2d;
-  display: flex;
-  align-items: center !important;
-  justify-content: center !important;
-  font-weight: 700;
-  padding-bottom: 20px;
-}
-
-.cat-offers{
-  background-color: white;
-  padding-top: 30px;
-}
-
-.section-icon {
-  margin-right: 10px;
-}
-
-.section-title .see-all-link {
-  color: #007bff;
-  text-decoration: underline;
-  margin-left: auto;
-  font-size: 18px;
-}
-
-.section-title .see-all-link:hover {
-  text-decoration: underline;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #017599;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .scrollable-row {
   display: flex;
+  gap: 1rem;
   overflow-x: auto;
-  padding: 20px 0;
-  gap: 20px;
-  scroll-snap-type: x mandatory;
+  padding-bottom: 1rem;
+  scrollbar-width: none;
 }
-
-.scrollable-row > div {
-  scroll-snap-align: center;
-}
-
-@media (max-width: 768px) {
-
-.banner-button{
+.scrollable-row::-webkit-scrollbar {
   display: none;
-}
-
-  .section {
-    padding: 30 10px;
-  }
-
-  .banner-text {
-    font-size: 32px;
-  }
-
-  .banner-subtext {
-    font-size: 20px;
-  }
-
-  .banner-buttons {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .banner-button {
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-
-  .section-title .see-all-link {
-    font-size: 14px;
-  }
-
-  .section-title{
-    font-size: 22px;
-    padding-bottom: 0px;
-  }
 }

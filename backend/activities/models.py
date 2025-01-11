@@ -1,14 +1,21 @@
 from django.db import models
 from users.models import Supplier
-from categories.models import Category
-from location.models import Location
+from categories.models import Category, SubCategory
+from reviews.models import Review
+from location.models import Location, SubLocation
 from datetime import datetime, timedelta
-from categories.models import SubCategory
-from location.models import SubLocation
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Avg
 
 
 class Activity(models.Model):
+    average_rating = models.FloatField(default=0.0)
+    reviews_count = models.IntegerField(default=0)
     featured = models.BooleanField(default=False)
+    family = models.BooleanField(default=False)
+    seasonal = models.BooleanField(default=False)
+    local_favorites = models.BooleanField(default=False)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to="activities/")
@@ -45,6 +52,14 @@ class Activity(models.Model):
     participant_age_range = models.CharField(max_length=50, blank=True, null=True)
     subcategories = models.ManyToManyField(SubCategory, related_name="activities", blank=True)
     sublocations = models.ManyToManyField(SubLocation, related_name="activities", blank=True)
+
+    def update_reviews(self):
+        content_type = ContentType.objects.get_for_model(self)
+        reviews = Review.objects.filter(content_type=content_type, object_id=self.id)
+
+        self.average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0.0
+        self.reviews_count = reviews.count()
+        self.save()
 
     class Meta:
         verbose_name_plural = "activities"

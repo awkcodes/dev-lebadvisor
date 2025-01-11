@@ -128,3 +128,38 @@ def get_tour_days(request, tour_offer_id):
         return Response(
             {"error": "Tour offer not found."}, status=status.HTTP_404_NOT_FOUND
         )
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_stock_to_tour_day(request):
+    """
+    Adds 'number_of_stocks' to a specific TourDay's stock.
+    Expects:
+      {
+         "tour_day_id": <ID of the TourDay>,
+         "number_of_stocks": <amount to add>
+      }
+    """
+    supplier = request.user.supplier
+    tour_day_id = request.data.get("tour_day_id")
+    stock_to_add = int(request.data.get("number_of_stocks", 0))
+
+    if stock_to_add <= 0:
+        return Response({"error": "Stock to add must be greater than 0."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    tour_day = get_object_or_404(TourDay, id=tour_day_id)
+
+    # Check if the tour belongs to the same supplier
+    if tour_day.tour_offer.tour.supplier != supplier:
+        return Response({"error": "You are not authorized to modify this tour day stock."},
+                        status=status.HTTP_403_FORBIDDEN)
+    
+    tour_day.stock += stock_to_add
+    tour_day.save()
+
+    return Response(
+        {"success": f"Successfully added {stock_to_add} stock to tour day {tour_day_id}."},
+        status=status.HTTP_200_OK
+    )
+

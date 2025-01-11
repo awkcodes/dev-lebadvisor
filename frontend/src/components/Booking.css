@@ -1,221 +1,45 @@
-.fancy-container {
-  max-width: 1200px;
+/************************************
+ * Main Container
+ ************************************/
+ .fancy-container {
+  max-width: 1300px;
   margin: auto;
   padding: 20px;
 }
 
-.fancy-dashboard-title {
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 22px !important;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  border-bottom: 3px solid #3498db;
-  padding-bottom: 10px;
-  padding-top: 50px;
-  font-size: 2rem; /* Adjusted for better readability on mobile */
-}
-
-.fancy-section-title {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 30px;
-  text-align: center;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem; /* Adjusted for better readability on mobile */
-}
-
-.fancy-section-icon {
-  margin-right: 10px;
-  font-size: 20px;
-  color: #3498db;
-}
-
-.fancy-summary-grid {
-  margin-bottom: 40px;
-}
-
-.centered-card {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.fancy-summary-card {
-  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  padding: 15px;
-}
-
-.fancy-card-title {
-  font-size: 1.2rem; /* Adjusted for better readability on mobile */
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.fancy-charts-grid {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-}
-
-.fancy-chart-card {
-  flex: 1;
-  min-width: 300px;
-  margin-bottom: 20px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.fancy-chart-title {
-  font-size: 1.2rem; /* Adjusted for better readability on mobile */
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  color: #2c3e50;
+/************************************
+ * Tabs Navigation
+ ************************************/
+.wp-tabs-wrapper {
   margin-bottom: 20px;
 }
 
-.fancy-chart-icon {
-  margin-right: 10px;
-  font-size: 24px;
-  color: #3498db;
+.wp-tabs .MuiTabs-flexContainer {
+  border-bottom: 2px solid #ddd;
 }
 
-.fancy-booking-grid {
-  margin-bottom: 40px;
-}
-
-.fancy-booking-card {
-  background-color: #f7f7f7;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-  border-radius: 8px;
-  overflow: hidden;
-  padding: 20px;
-}
-
-.fancy-booking-card:hover {
-  transform: translateY(-5px);
-}
-
-.fancy-booking-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-
-.fancy-booking-content {
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 8px;
-}
-
-.fancy-booking-title {
+.wp-tabs .MuiTab-root {
   font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 10px;
-  font-size: 1.2rem; /* Adjusted for better readability on mobile */
-}
-
-.fancy-booking-detail {
-  margin-bottom: 8px;
-  color: #333;
-}
-
-.fancy-label {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.fancy-booking-value {
-  font-weight: normal;
+  text-transform: none;
   color: #555;
-  margin-left: 5px;
+  min-width: 100px;
 }
 
-.fancy-confirm-button {
-  background-color: #2ecc71;
-  color: #fff;
-  margin-top: 15px;
-  transition: background-color 0.3s;
-  font-size: 1rem; /* Adjusted for better readability on mobile */
+.wp-tabs .Mui-selected {
+  color: #3498db !important;
+  font-weight: 700 !important;
 }
 
-.fancy-confirm-button:hover {
-  background-color: #27ae60;
+.wp-tabs .MuiTabs-indicator {
+  background-color: #3498db;
 }
 
-.fancy-booking-status {
-  color: #2ecc71;
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-.fancy-no-bookings {
-  font-size: 1.2rem; /* Adjusted for better readability on mobile */
-  color: #999;
-  text-align: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  background-color: #f7f7f7;
-  border-radius: 8px;
-  margin-top: 30px !important;
-}
-
-.fancy-chart {
-  margin-top: 20px;
-}
-
-.fancy-filter-control {
-  width: 200px;
-  margin: 20px 0 !important;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.fancy-filter-select {
-  background-color: #fff;
-}
-
-.fancy-offers-section {
-  margin-bottom: 40px !important;
-}
-
-.fancy-offer-card {
-  transition: transform 0.2s;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.fancy-offer-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-.fancy-no-offers {
-  text-align: center;
-  color: #999;
-  width: 100%;
-  padding: 20px;
-  background-color: #f7f7f7;
-  border-radius: 8px;
-  margin-top: 30px !important;
-}
-
+/************************************
+ * Loading & Error
+ ************************************/
 .fancy-loading {
+  display: block;
+  margin: 60px auto;
   color: #3498db;
 }
 
@@ -224,76 +48,366 @@
   text-align: center;
 }
 
-.fancy-booking-section {
+/************************************
+ * Overview / Summary
+ ************************************/
+.summary-grid {
+  margin-top: 10px;
+}
+
+.summary-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.summary-icon {
+  font-size: 1.4rem;
+  color: #3498db;
+  margin-right: 8px;
+}
+
+.summary-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.summary-number {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 8px 0;
+  color: #34495e;
+}
+
+.today-customer-listitem {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+}
+
+.fancy-no-customers {
+  margin-top: 12px;
+  font-size: 1rem;
+  color: #999;
+  text-align: center;
+}
+
+/************************************
+ * Charts / Stats
+ ************************************/
+.fancy-charts-grid {
+  display: flex;
+  flex-wrap: nowrap; /* keep in one row on wide screens */
+  gap: 24px;
+  justify-content: space-between;
   margin-bottom: 40px;
 }
 
-.fancy-booking-card-container {
-  background: #9cc3ff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.fancy-chart-card {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+.fancy-chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.fancy-chart-icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+  color: #3498db;
+}
+
+.fancy-chart {
+  margin-top: 20px;
+}
+
+/* Wrap if narrower than 1000px */
+@media (max-width: 1000px) {
   .fancy-charts-grid {
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  
   .fancy-chart-card {
-    width: 50%;
+    max-width: 90%;
+    margin-bottom: 20px;
   }
 }
 
-@media (max-width: 480px) {
-  .fancy-dashboard-title {
-    font-size: 20px !important; /* Smaller font for better fit on small screens */
-    font-weight: 700 !important;
-  }
+/************************************
+ * Offers (Fancy Advanced Design)
+ ************************************/
+/* Each offers section container */
+.fancy-offers-section {
+  position: relative;
+  border-radius: 20px;
+  padding: 40px 30px;
+  margin-bottom: 60px;
 
-  .fancy-section-title {
-    font-size: 14px; /* Smaller font for better fit on small screens */
-  }
+  /* subtle fancy multi-stop gradient */
+  background: linear-gradient(
+    135deg,
+    #fdfdfd 0%,
+    #f7f9fc 40%,
+    #eef2f7 100%
+  );
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+}
 
-  .fancy-no-bookings{
-    padding-left: 20px;
-  }
+/* Radial overlays for a more advanced effect */
+.fancy-offers-section::before,
+.fancy-offers-section::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0.12;
+  z-index: 0;
+  transition: opacity 0.4s ease;
+}
 
-  .fancy-card-title,
+.fancy-offers-section::before {
+  width: 240px;
+  height: 240px;
+  top: -60px;
+  right: -60px;
+  background: radial-gradient(circle, #49a6e9 20%, transparent 70%);
+}
+
+.fancy-offers-section::after {
+  width: 280px;
+  height: 280px;
+  left: -100px;
+  bottom: -100px;
+  background: radial-gradient(circle, #f2c94c 20%, transparent 70%);
+}
+
+.fancy-offers-section:hover::before,
+.fancy-offers-section:hover::after {
+  opacity: 0.2;
+}
+
+/* The section title with unique backgrounds per category:
+   We'll add classes for .offers-header-activities, etc. */
+.offers-header {
+  position: relative;
+  z-index: 1; 
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  color: #fff;  /* we want white text for better contrast */
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.offers-header-activities {
+  background-color: #2ecc71; /* greenish for activities */
+}
+
+.offers-header-packages {
+  background-color: #9b59b6; /* purple for packages */
+}
+
+.offers-header-tours {
+  background-color: #e67e22; /* orange for tours */
+}
+
+.offers-section-icon {
+  font-size: 1.6rem;
+}
+
+/* No items */
+.offers-no-items {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 1rem;
+}
+
+/* Offers gallery: remove hover transform & shadow from the cards */
+.offers-gallery {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 10px;
+}
+
+@media (max-width: 992px) {
+  .offers-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .offers-gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Remove the card hover effect */
+.offers-gallery-item {
+  position: relative;
+  border-radius: 12px;
+  transition: none; /* no transform transition */
+  box-shadow: none; /* remove extra shadow on hover */
+}
+
+/* remove all scaling or shadow changes on hover */
+.offers-gallery-item:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/************************************
+ * Bookings (Tables)
+ ************************************/
+.bookings-filter {
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px 0 20px;
+}
+
+.fancy-filter-control {
+  width: 200px;
+}
+
+.fancy-filter-select {
+  background-color: #fff;
+}
+
+.bookings-subtitle {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Responsive Scrollable Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bookings-table-container {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.responsive-table {
+  min-width: 950px;
+  white-space: nowrap;
+  border-collapse: collapse;
+}
+
+.table-header {
+  font-weight: 600;
+  color: #34495e;
+  background-color: #ecf0f1;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.booking-table-row:hover {
+  background-color: #f9f9f9;
+}
+
+.table-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.table-title-cell {
+  display: flex;
+  align-items: center;
+}
+
+.table-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.table-no-bookings {
+  font-size: 1rem;
+  color: #999;
+  text-align: center;
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+/************************************
+ * Responsive Adjustments
+ ************************************/
+@media (max-width: 768px) {
+  .summary-title {
+    font-size: 1rem;
+  }
+  .summary-number {
+    font-size: 1.4rem;
+  }
   .fancy-chart-title {
-    font-size: 12px; /* Smaller font for better fit on small screens */
+    font-size: 0.9rem;
   }
-
-  .fancy-booking-section{
-    padding-left: 0px !important;
+  .offers-header {
+    font-size: 1rem;
   }
-
-  .fancy-booking-title {
-    font-size: 12px; /* Smaller font for better fit on small screens */
+  .bookings-subtitle {
+    font-size: 1rem;
   }
-
-  .fancy-booking-card {
-    padding: 15px; /* Reduced padding for smaller screens */
+  .table-header {
+    font-size: 0.8rem;
   }
-
-  .fancy-booking-content {
-    padding: 15px; /* Reduced padding for smaller screens */
+  .table-thumb {
+    width: 32px;
+    height: 32px;
   }
-
-  .fancy-confirm-button {
-    font-size: 12px; /* Smaller button text for better fit on small screens */
+  .table-title {
+    font-size: 0.9rem;
   }
-
-  .fancy-no-bookings {
-    font-size: 14px; /* Smaller text for better fit on small screens */
+  .responsive-table {
+    min-width: 800px;
   }
-}
-
-
-.qr-code {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  margin-top: 5px;
 }

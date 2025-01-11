@@ -103,6 +103,8 @@ class ActivitySerializer(serializers.ModelSerializer):
     )
     location = LocationSerializer()
     offers = ActivityOfferSerializer(many=True, read_only=True)
+    average_rating = serializers.FloatField(read_only=True)
+    reviews_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Activity
@@ -135,6 +137,8 @@ class ActivitySerializer(serializers.ModelSerializer):
             "catalogs",
             "map",
             "offers",
+            "average_rating",  # Included
+            "reviews_count",    # Included
         ]
         read_only_fields = ["created_at"]
 

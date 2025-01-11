@@ -82,6 +82,59 @@ def latest_items_api(request):
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
+def family_picks_api(request):
+    activities = Activity.objects.filter(family=True)
+    packages = Package.objects.filter(family=True)
+    tours = Tour.objects.filter(family=True)
+
+    activity_serializer = ActivitySerializer(activities, many=True)
+    package_serializer = PackageSerializer(packages, many=True)
+    tour_serializer = TourSerializer(tours, many=True)
+
+    return Response({
+        "activities": activity_serializer.data,
+        "packages": package_serializer.data,
+        "tours": tour_serializer.data
+    })
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def seasonal_highlights_api(request):
+    activities = Activity.objects.filter(seasonal=True)
+    packages = Package.objects.filter(seasonal=True)
+    tours = Tour.objects.filter(seasonal=True)
+
+    activity_serializer = ActivitySerializer(activities, many=True)
+    package_serializer = PackageSerializer(packages, many=True)
+    tour_serializer = TourSerializer(tours, many=True)
+
+    return Response({
+        "activities": activity_serializer.data,
+        "packages": package_serializer.data,
+        "tours": tour_serializer.data
+    })
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def local_favorites_api(request):
+    activities = Activity.objects.filter(local_favorites=True)
+    packages = Package.objects.filter(local_favorites=True)
+    tours = Tour.objects.filter(local_favorites=True)
+
+    activity_serializer = ActivitySerializer(activities, many=True)
+    package_serializer = PackageSerializer(packages, many=True)
+    tour_serializer = TourSerializer(tours, many=True)
+
+    return Response({
+        "activities": activity_serializer.data,
+        "packages": package_serializer.data,
+        "tours": tour_serializer.data
+    })
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
 def featured_items_api(request):
     # Fetch featured items from each model
     current_time = timezone.now()

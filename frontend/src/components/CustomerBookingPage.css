@@ -1,0 +1,189 @@
+/***********************************
+ * Overall Container
+ ***********************************/
+ .stacked-container {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 32px;
+  background: linear-gradient(135deg, #e9f2f9, #fbfcfe);
+}
+
+/***********************************
+ * Loading & Error
+ ***********************************/
+.stacked-loading {
+  margin-top: 48px;
+  color: #3498db;
+}
+.stacked-error {
+  margin-top: 24px;
+  text-align: center;
+}
+
+/***********************************
+ * Section Cards (Active, History, Expired)
+ ***********************************/
+.stacked-section-card {
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.09);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 24px;
+}
+
+.stacked-section-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.12);
+}
+
+.stacked-section-header {
+  background-color: #f4f6f9;
+  border-bottom: 1px solid #ddd;
+  padding: 16px !important;
+  display: flex;
+  align-items: center;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-left: 8px;
+}
+
+/***********************************
+ * Each Stacked Booking
+ ***********************************/
+.stacked-booking-card {
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ebedf0;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+  transition: background-color 0.3s ease;
+}
+
+.stacked-booking-card:hover {
+  background-color: #fefefe;
+}
+
+/***********************************
+ * Rows in the booking card
+ ***********************************/
+.stacked-row {
+  display: flex;
+  margin: 6px 0;
+}
+
+.stacked-label {
+  width: 90px;
+  font-weight: 500;
+  color: #666;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.stacked-title-link {
+  font-weight: 600;
+  color: #2980b9;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.stacked-title-link:hover {
+  color: #1f5f82;
+  text-decoration: underline;
+}
+
+/***********************************
+ * Fancy Hover (for entire card)
+ ***********************************/
+.fancy-hover {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.fancy-hover:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
+  transform: translateY(-2px);
+}
+
+/***********************************
+ * Badges & Icons
+ ***********************************/
+.icon-inline {
+  margin-right: 4px;
+  font-size: 1rem;
+  color: #555;
+}
+
+.badge-paid {
+  color: #27ae60;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 4px;
+}
+.badge-unpaid {
+  color: #e74c3c;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 4px;
+}
+.badge-confirmed {
+  color: #27ae60;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 4px;
+}
+.badge-not-confirmed {
+  color: #e74c3c;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/***********************************
+ * QR Code
+ ***********************************/
+.qr-code-stacked {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.qr-image {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+}
+.no-qr {
+  color: #aaa;
+}
+
+/***********************************
+ * "No bookings"
+ ***********************************/
+.no-bookings-stacked {
+  text-align: center;
+  color: #999;
+  background-color: #f7f9fb;
+  padding: 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-top: 16px;
+}
+
+/***********************************
+ * Responsive Adjustments
+ ***********************************/
+@media (max-width: 768px) {
+  .stacked-label {
+    width: 70px;
+  }
+}
+@media (max-width: 480px) {
+  .stacked-label {
+    width: 60px;
+    font-size: 0.85rem;
+  }
+  .section-title {
+    font-size: 1rem;
+  }
+}

@@ -83,7 +83,8 @@ class PackageSerializer(serializers.ModelSerializer):
         many=True, read_only=True, source="itinerary_step_set"
     )
     offers = PackageOfferSerializer(many=True, read_only=True)
-
+    average_rating = serializers.FloatField(read_only=True)
+    reviews_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = Package
         fields = "__all__"

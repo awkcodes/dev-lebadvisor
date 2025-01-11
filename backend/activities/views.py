@@ -8,48 +8,69 @@ from rest_framework.response import Response
 from django.utils import timezone
 from datetime import datetime
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_stock_to_periods(request):
+    supplier = request.user.supplier
+    period_id = request.data.get("period")
+    stock_to_add = int(request.data.get("number_of_stocks", 0))
+
+    if stock_to_add <= 0:
+        return Response(
+            {"error": "The stock to add must be greater than 0."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Fetch the period
+    period = get_object_or_404(Period, id=period_id)
+
+    # Check if the period belongs to an offer that is managed by the supplier
+    if period.activity_offer.activity.supplier != supplier:
+        return Response(
+            {"error": "You are not authorized to modify stock for this period."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    # Add stock to the period
+    period.stock += stock_to_add
+    period.save()
+
+    return Response(
+        {"success": f"Successfully added {stock_to_add} stock to the period."},
+        status=status.HTTP_200_OK,
+    )
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def block_activity_day(request):
+    """
+    Sets the stock of all periods on a given date (YYYY-MM-DD)
+    to 0 for the specified activity.
+    """
     supplier = request.user.supplier
     activity_id = request.data.get("activity_id")
     day_str = request.data.get("day")
-    # Convert the day string to a date object
+
     try:
         day = datetime.strptime(day_str, "%Y-%m-%d").date()
     except ValueError:
-        return Response(
-            {"error": "Invalid date format. Use YYYY-MM-DD."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "Invalid date format. Use YYYY-MM-DD."},
+                        status=status.HTTP_400_BAD_REQUEST)
 
-    # Fetch the activity
     activity = get_object_or_404(Activity, id=activity_id)
-
-    # Check if the activity belongs to the supplier making the request
     if activity.supplier != supplier:
-        return Response(
-            {"error": "You are not authorized to block periods for this activity."},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+        return Response({"error": "You are not authorized to block periods for this activity."},
+                        status=status.HTTP_403_FORBIDDEN)
 
-    # Fetch all periods on the specified day for this activity
     periods = Period.objects.filter(activity_offer__activity=activity, day=day)
-
     if not periods.exists():
-        return Response(
-            {"error": "No periods found for the specified day."},
-            status=status.HTTP_404_NOT_FOUND,
-        )
+        return Response({"error": "No periods found for the specified day."},
+                        status=status.HTTP_404_NOT_FOUND)
 
-    # Set the stock of all periods on this day to 0
     periods.update(stock=0)
+    return Response({"success": f"All periods on {day_str} have been blocked."},
+                    status=status.HTTP_200_OK)
 
-    return Response(
-        {"success": f"All periods on {day_str} have been blocked."},
-        status=status.HTTP_200_OK,
-    )
 
 
 @api_view(["POST"])

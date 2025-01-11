@@ -52,6 +52,40 @@ def block_package_day(request):
         status=status.HTTP_200_OK,
     )
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_stock_to_package_day(request):
+    """
+    Adds 'number_of_stocks' to a specific PackageDay's stock.
+    Expects:
+      {
+         "package_day_id": <ID of the PackageDay>,
+         "number_of_stocks": <amount to add>
+      }
+    """
+    supplier = request.user.supplier
+    package_day_id = request.data.get("package_day_id")
+    stock_to_add = int(request.data.get("number_of_stocks", 0))
+
+    if stock_to_add <= 0:
+        return Response({"error": "Stock to add must be greater than 0."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    package_day = get_object_or_404(PackageDay, id=package_day_id)
+    
+    # Check if the package belongs to the same supplier
+    if package_day.package_offer.package.supplier != supplier:
+        return Response({"error": "You are not authorized to modify this package day stock."},
+                        status=status.HTTP_403_FORBIDDEN)
+    
+    package_day.stock += stock_to_add
+    package_day.save()
+
+    return Response(
+        {"success": f"Successfully added {stock_to_add} stock to package day {package_day_id}."},
+        status=status.HTTP_200_OK
+    )
+
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])

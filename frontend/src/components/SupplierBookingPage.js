@@ -1,68 +1,120 @@
 import React, { useState, useEffect } from 'react';
 import {
-  CircularProgress,
   Container,
-  Grid,
-  Typography,
+  CircularProgress,
+  Alert,
   Card,
   CardContent,
+  Typography,
   Button,
-  Alert,
-  Select,
-  MenuItem,
+  Grid,
+  Tabs,
+  Tab,
   FormControl,
   InputLabel,
+  Select,
+  MenuItem,
+  Divider,
+  Box,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Tooltip,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
-import api from '../services/api';
-import ActivityCard from './supplier/ActivityCard';
-import TourCard from './supplier/TourCard';
-import PackageCard from './supplier/PackageCard';
-import './Booking.css';
 import {
   FaTasks,
   FaBoxes,
   FaRoute,
   FaCheck,
-  FaTimes,
   FaUserFriends,
   FaMoneyBillWave,
+  FaUsers,
+  FaCalendarTimes,
+  FaBiking,
+  FaSuitcaseRolling,
+  FaRoute as FaRouteIcon
 } from 'react-icons/fa';
+
+import api from '../services/api';
+import ActivityCard from './supplier/ActivityCard';
+import TourCard from './supplier/TourCard';
+import PackageCard from './supplier/PackageCard';
+
+import './Booking.css'; // Our updated CSS
 
 ChartJS.register(...registerables);
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`dashboard-tabpanel-${index}`}
+      aria-labelledby={`dashboard-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
 const SupplierBookingPage = () => {
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activityBookings, setActivityBookings] = useState([]);
-  const [packageBookings, setPackageBookings] = useState([]);
-  const [tourBookings, setTourBookings] = useState([]);
+  const [error, setError] = useState(null);
+
+  // Dashboard Data
   const [dashboardData, setDashboardData] = useState({});
-  const [filter, setFilter] = useState('all');
   const [bookingData, setBookingData] = useState([]);
   const [customerData, setCustomerData] = useState([]);
   const [salesData, setSalesData] = useState([]);
-  const [offers, setOffers] = useState({
-      activity_offers: [],
-      package_offers: [],
-      tour_offers: [],
-    });
 
-  const fetchBookings = async () => {
+  // Offers
+  const [offers, setOffers] = useState({
+    activity_offers: [],
+    package_offers: [],
+    tour_offers: []
+  });
+
+  // Bookings
+  const [activityBookings, setActivityBookings] = useState([]);
+  const [packageBookings, setPackageBookings] = useState([]);
+  const [tourBookings, setTourBookings] = useState([]);
+
+  // Filter
+  const [filter, setFilter] = useState('all');
+
+  // Tabs
+  const [tabValue, setTabValue] = useState(0);
+
+  // ---------------------------
+  // Data Fetching
+  // ---------------------------
+  const fetchAllData = async () => {
     try {
       const [
         activitiesResponse,
         packagesResponse,
         toursResponse,
-        dashboardResponse,
+        dashboardResponse
       ] = await Promise.all([
         api.get('/api/supplier/bookings/'),
         api.get('/api/supplier/packagesb/'),
         api.get('/api/supplier/toursb/'),
-        api.get('/api/supplier-dashboard/'),
+        api.get('/api/supplier-dashboard/')
       ]);
 
       setActivityBookings(activitiesResponse.data || []);
@@ -70,14 +122,10 @@ const SupplierBookingPage = () => {
       setTourBookings(toursResponse.data || []);
       setDashboardData(dashboardResponse.data || {});
 
-      const [
-        bookingsPerMonth,
-        customersPerMonth,
-        salesPerMonth,
-      ] = await Promise.all([
+      const [bookingsPerMonth, customersPerMonth, salesPerMonth] = await Promise.all([
         api.get('/api/supplier/bookings-per-month/'),
         api.get('/api/supplier/customers-per-month/'),
-        api.get('/api/supplier/sales-per-month/'),
+        api.get('/api/supplier/sales-per-month/')
       ]);
 
       setBookingData(bookingsPerMonth.data || []);
@@ -101,13 +149,12 @@ const SupplierBookingPage = () => {
 
   useEffect(() => {
     fetchOffers();
-    fetchBookings();
+    fetchAllData();
   }, []);
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value);
-  };
-
+  // ---------------------------
+  // Confirm Booking
+  // ---------------------------
   const handleConfirm = async (type, bookingId) => {
     try {
       let endpoint = '';
@@ -119,10 +166,17 @@ const SupplierBookingPage = () => {
         endpoint = `/api/supplier/tour/${bookingId}/confirm/`;
       }
       await api.post(endpoint);
-      await fetchBookings();
+      await fetchAllData();
     } catch (err) {
       setError(err);
     }
+  };
+
+  // ---------------------------
+  // Filter Logic
+  // ---------------------------
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
   };
 
   const filterBookings = (bookings = []) => {
@@ -136,175 +190,168 @@ const SupplierBookingPage = () => {
     });
   };
 
-  const renderBookingList = (bookings = [], type) => (
-    <Grid container spacing={2} className="fancy-booking-grid">
-      {bookings.length > 0 ? (
-        filterBookings(bookings).map((booking) => {
-          const imageUrl =
-            booking.period?.activity_offer?.activity?.image ||
-            booking.tourday?.tour_offer?.tour?.image ||
-            booking.package_offer?.package?.image;
-          const title =
-            booking.period?.activity_offer?.activity?.title ||
-            booking.tourday?.tour_offer?.tour?.title ||
-            booking.package_offer?.package?.title ||
-            'Booking';
-          const offer =
-            booking.period?.activity_offer?.title ||
-            booking.tourday?.tour_offer?.title ||
-            booking.package_offer?.title ||
-            'Offer';
-          const price =
-            (booking.period?.activity_offer?.price ||
-              booking.tourday?.tour_offer?.price ||
-              booking.package_offer?.price ||
-              0) * booking.quantity;
-          const day = booking.period?.day || booking.tourday?.day || booking.start_date;
-          const startTime =
-            booking.period?.time_from ||
-            booking.tourday?.tour_offer?.tour?.pickup_time ||
-            booking.start_date;
-          const endTime =
-            booking.period?.time_to ||
-            booking.tourday?.tour_offer?.tour?.dropoff_time ||
-            booking.end_date;
-          const customerUsername = booking.customer?.user?.username;
-          const customerEmail = booking.customer?.user?.email;
-          const customerPhone = booking.customer?.user?.phone;
+  // ---------------------------
+  // Render Bookings Table
+  // ---------------------------
+  const renderBookingsTable = (bookings = [], typeLabel) => {
+    const filtered = filterBookings(bookings);
 
-          return (
-            <Grid item xs={12} sm={6} md={4} key={booking.id}>
-              <Card className="fancy-booking-card">
-                {imageUrl && (
-                  <img
-                    src={`http://localhost:8000/${imageUrl}`}
-                    className="fancy-booking-image"
-                    alt="Booking"
-                  />
-                )}
-                <CardContent className="fancy-booking-content">
-                  <Typography
-                    variant="h6"
-                    component="h2"
-                    className="fancy-booking-title"
-                  >
-                    {title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="fancy-booking-detail fancy-label"
-                  >
-                    Offer:
-                    <span className="fancy-booking-value">
-                      {offer}
-                    </span>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="fancy-booking-detail fancy-label"
-                  >
-                    Price:
-                    <span className="fancy-booking-value">
-                      ${price}
-                    </span>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="fancy-booking-detail fancy-label"
-                  >
-                    Day:
-                    <span className="fancy-booking-value">
-                      {day}
-                    </span>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="fancy-booking-detail fancy-label"
-                  >
-                    Starts at:
-                    <span className="fancy-booking-value">
-                      {startTime}
-                    </span>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="fancy-booking-detail fancy-label"
-                  >
-                    Ends at:
-                    <span className="fancy-booking-value">
-                      {endTime}
-                    </span>
-                  </Typography>
-                  {customerUsername && (
-                    <Typography
-                      variant="body2"
-                      className="fancy-booking-detail fancy-label"
-                    >
-                      Customer:
-                      <span className="fancy-booking-value">
-                        {customerUsername}
-                      </span>
-                    </Typography>
-                  )}
-                  {customerEmail && (
-                    <Typography
-                      variant="body2"
-                      className="fancy-booking-detail fancy-label"
-                    >
-                      Email:
-                      <span className="fancy-booking-value">
-                        {customerEmail}
-                      </span>
-                    </Typography>
-                  )}
-                  {customerPhone && (
-                    <Typography
-                      variant="body2"
-                      className="fancy-booking-detail fancy-label"
-                    >
-                      Phone:
-                      <span className="fancy-booking-value">
-                        {customerPhone}
-                      </span>
-                    </Typography>
-                  )}
-                  {!booking.confirmed ? (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleConfirm(type, booking.id)}
-                      className="fancy-confirm-button"
-                    >
-                      Confirm
-                    </Button>
-                  ) : (
-                    <Typography
-                      variant="body1"
-                      className="fancy-booking-status confirmed"
-                    >
-                      <FaCheck className="icon-inline" /> Confirmed
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })
-      ) : (
-        <Typography className="fancy-no-bookings">
+    if (!filtered.length) {
+      return (
+        <Typography className="table-no-bookings">
           No bookings available
         </Typography>
-      )}
-    </Grid>
-  );
+      );
+    }
 
-  if (loading)
+    return (
+      <div className="table-responsive">
+        <TableContainer component={Paper} className="bookings-table-container">
+          <Table className="responsive-table">
+            <TableHead>
+              <TableRow>
+                <TableCell className="table-header">Title</TableCell>
+                <TableCell className="table-header">Offer</TableCell>
+                <TableCell className="table-header">Day</TableCell>
+                <TableCell className="table-header">Time</TableCell>
+                <TableCell className="table-header">Price</TableCell>
+                <TableCell className="table-header">Status</TableCell>
+                <TableCell className="table-header">Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filtered.map((booking) => {
+                const imageUrl =
+                  booking.period?.activity_offer?.activity?.image ||
+                  booking.tourday?.tour_offer?.tour?.image ||
+                  booking.package_offer?.package?.image;
+
+                const title =
+                  booking.period?.activity_offer?.activity?.title ||
+                  booking.tourday?.tour_offer?.tour?.title ||
+                  booking.package_offer?.package?.title ||
+                  'Booking';
+
+                const offerTitle =
+                  booking.period?.activity_offer?.title ||
+                  booking.tourday?.tour_offer?.title ||
+                  booking.package_offer?.title ||
+                  'Offer';
+
+                const price =
+                  (booking.period?.activity_offer?.price ||
+                    booking.tourday?.tour_offer?.price ||
+                    booking.package_offer?.price ||
+                    0) * booking.quantity;
+
+                const day =
+                  booking.period?.day ||
+                  booking.tourday?.day ||
+                  booking.start_date;
+
+                const startTime =
+                  booking.period?.time_from ||
+                  booking.tourday?.tour_offer?.tour?.pickup_time ||
+                  booking.start_date;
+
+                const endTime =
+                  booking.period?.time_to ||
+                  booking.tourday?.tour_offer?.tour?.dropoff_time ||
+                  booking.end_date;
+
+                const confirmedStatus = booking.confirmed ? 'Confirmed' : 'Unconfirmed';
+                const bookingStatusColor = booking.confirmed ? '#27ae60' : '#e74c3c';
+
+                return (
+                  <TableRow key={booking.id} className="booking-table-row">
+                    <TableCell>
+                      <div className="table-title-cell">
+                        {imageUrl && (
+                          <img
+                            src={`http://localhost:8000/${imageUrl}`}
+                            alt="thumbnail"
+                            className="table-thumb"
+                          />
+                        )}
+                        <span className="table-title">{title}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" noWrap>
+                        {offerTitle}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" noWrap>
+                        {day}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" noWrap>
+                        {startTime} - {endTime}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" noWrap>
+                        ${price}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        variant="body2"
+                        noWrap
+                        sx={{ color: bookingStatusColor, fontWeight: 600 }}
+                      >
+                        {confirmedStatus}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {!booking.confirmed && (
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() => handleConfirm(typeLabel, booking.id)}
+                          sx={{
+                            backgroundColor: '#3498db',
+                            color: '#fff',
+                            textTransform: 'none',
+                            ':hover': {
+                              backgroundColor: '#2980b9'
+                            }
+                          }}
+                        >
+                          Confirm
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    );
+  };
+
+  // ---------------------------
+  // Tab Handling
+  // ---------------------------
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  // ---------------------------
+  // Rendering
+  // ---------------------------
+  if (loading) {
     return (
       <Container className="fancy-container">
         <CircularProgress className="fancy-loading" />
       </Container>
     );
-  if (error)
+  }
+  if (error) {
     return (
       <Container className="fancy-container">
         <Alert severity="error" className="fancy-error">
@@ -312,54 +359,92 @@ const SupplierBookingPage = () => {
         </Alert>
       </Container>
     );
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Container className="fancy-container">
-        <Typography
-          variant="h3"
-          component="h1"
-          gutterBottom
-          className="fancy-dashboard-title"
-        >
-          Supplier Dashboard
-        </Typography>
+        {/* Tabs */}
+        <Box className="wp-tabs-wrapper">
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="Supplier Dashboard Tabs"
+            className="wp-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            <Tab label="Overview" />
+            <Tab label="Stats" />
+            <Tab label="Offers" />
+            <Tab label="Bookings" />
+          </Tabs>
+        </Box>
 
-        {dashboardData && (
-          <Grid container spacing={4} className="fancy-summary-grid">
+        {/* Overview */}
+        <TabPanel value={tabValue} index={0}>
+          <Grid container spacing={3} className="summary-grid">
             <Grid item xs={12} md={6}>
-              <Card className="fancy-summary-card centered-card">
+              <Card className="summary-card">
                 <CardContent>
-                  <Typography className="fancy-card-title">
-                    Unconfirmed Bookings: {dashboardData.unconfirmed_bookings || 0}
+                  <div className="summary-card-header">
+                    <FaCalendarTimes className="summary-icon" />
+                    <Typography variant="h6" className="summary-title">
+                      Unconfirmed Bookings
+                    </Typography>
+                  </div>
+                  <Typography variant="h4" className="summary-number">
+                    {dashboardData.unconfirmed_bookings || 0}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Bookings awaiting confirmation
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Card className="fancy-summary-card centered-card">
+              <Card className="summary-card">
                 <CardContent>
-                  <Typography className="fancy-card-title">
-                    Today's Customers
-                  </Typography>
+                  <div className="summary-card-header">
+                    <FaUsers className="summary-icon" />
+                    <Typography variant="h6" className="summary-title">
+                      Today's Customers
+                    </Typography>
+                  </div>
                   {dashboardData.todays_customers &&
                   dashboardData.todays_customers.length > 0 ? (
-                    dashboardData.todays_customers.map((customer, index) => (
-                      <div key={index} className="fancy-customer-details">
-                        <Typography className="fancy-customer-info">
-                          {customer[0]}
-                        </Typography>
-                        <div className="fancy-offer-details">
-                          <Typography className="fancy-offer-title">
-                            {customer[1]}
-                          </Typography>
-                          <Typography className="fancy-customer-time">
-                            {customer[2]}
-                          </Typography>
-                        </div>
-                      </div>
-                    ))
+                    <List sx={{ marginTop: '10px' }}>
+                      {dashboardData.todays_customers.map((customer, index) => (
+                        <ListItem key={index} className="today-customer-listitem">
+                          <ListItemAvatar>
+                            <Tooltip title="Customer">
+                              <Avatar sx={{ backgroundColor: '#2c3e50', color: '#fff' }}>
+                                {customer[0]?.charAt(0)?.toUpperCase() || 'C'}
+                              </Avatar>
+                            </Tooltip>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={
+                              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                {customer[0]}
+                              </Typography>
+                            }
+                            secondary={
+                              <>
+                                <Typography variant="body2" component="span" color="textPrimary">
+                                  {customer[1]}
+                                </Typography>
+                                <br />
+                                <Typography variant="body2" component="span">
+                                  {customer[2]}
+                                </Typography>
+                              </>
+                            }
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
                   ) : (
                     <Typography className="fancy-no-customers">
                       No customers today.
@@ -369,234 +454,219 @@ const SupplierBookingPage = () => {
               </Card>
             </Grid>
           </Grid>
-        )}
+        </TabPanel>
 
-        {/* Charts Section */}
-        <Grid container spacing={4} className="fancy-charts-grid">
-          <Grid item xs={12} md={4}>
+        {/* Stats */}
+        <TabPanel value={tabValue} index={1}>
+          {/* 3 charts in a row */}
+          <div className="fancy-charts-grid">
+            {/* Bookings Chart */}
             <Card className="fancy-chart-card">
               <CardContent>
-                <Typography className="fancy-chart-title">
+                <Typography className="fancy-chart-title" sx={{ textAlign: 'center' }}>
                   <FaTasks className="fancy-chart-icon" /> Bookings Per Month
                 </Typography>
                 <Line
                   data={{
                     labels: [
-                      'January',
-                      'February',
-                      'March',
-                      'April',
-                      'May',
-                      'June',
-                      'July',
-                      'August',
-                      'September',
-                      'October',
-                      'November',
-                      'December',
+                      'January','February','March','April','May','June',
+                      'July','August','September','October','November','December'
                     ],
                     datasets: [
                       {
                         label: 'Bookings per Month',
                         data: bookingData,
                         borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                      },
-                    ],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                      }
+                    ]
                   }}
                   className="fancy-chart"
                 />
               </CardContent>
             </Card>
-          </Grid>
 
-          <Grid item xs={12} md={4}>
+            {/* Customers Chart */}
             <Card className="fancy-chart-card">
               <CardContent>
-                <Typography className="fancy-chart-title">
+                <Typography className="fancy-chart-title" sx={{ textAlign: 'center' }}>
                   <FaUserFriends className="fancy-chart-icon" /> Customers Per Month
                 </Typography>
                 <Line
                   data={{
                     labels: [
-                      'January',
-                      'February',
-                      'March',
-                      'April',
-                      'May',
-                      'June',
-                      'July',
-                      'August',
-                      'September',
-                      'October',
-                      'November',
-                      'December',
+                      'January','February','March','April','May','June',
+                      'July','August','September','October','November','December'
                     ],
                     datasets: [
                       {
                         label: 'Customers per Month',
                         data: customerData,
                         borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                      },
-                    ],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)'
+                      }
+                    ]
                   }}
                   className="fancy-chart"
                 />
               </CardContent>
             </Card>
-          </Grid>
 
-          <Grid item xs={12} md={4}>
+            {/* Sales Chart */}
             <Card className="fancy-chart-card">
               <CardContent>
-                <Typography className="fancy-chart-title">
+                <Typography className="fancy-chart-title" sx={{ textAlign: 'center' }}>
                   <FaMoneyBillWave className="fancy-chart-icon" /> Sales Per Month
                 </Typography>
                 <Line
                   data={{
                     labels: [
-                      'January',
-                      'February',
-                      'March',
-                      'April',
-                      'May',
-                      'June',
-                      'July',
-                      'August',
-                      'September',
-                      'October',
-                      'November',
-                      'December',
+                      'January','February','March','April','May','June',
+                      'July','August','September','October','November','December'
                     ],
                     datasets: [
                       {
                         label: 'Sales per Month',
                         data: salesData,
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                      },
-                    ],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)'
+                      }
+                    ]
                   }}
                   className="fancy-chart"
                 />
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
+          </div>
+        </TabPanel>
 
-        {/* Offers Section */}
-        <Typography
-          variant="h5"
-          component="h2"
-          className="fancy-section-title"
-        >
-          <FaTasks className="fancy-section-icon" /> Activities
-        </Typography>
-        <Grid container spacing={2} className="fancy-offers-section">
-          {offers.activity_offers.length > 0 ? (
-            offers.activity_offers.map((offer) => (
-              <Grid item xs={12} sm={6} md={4} key={offer.id}>
-                <ActivityCard activity={offer} className="fancy-offer-card" />
-              </Grid>
-            ))
-          ) : (
-            <Typography className="fancy-no-offers">
-              No activity offers available
+        {/* Offers */}
+        <TabPanel value={tabValue} index={2}>
+
+          {/* Activities Section */}
+          <div className="fancy-offers-section">
+            {/* The title has a unique background and is centered */}
+            <Typography
+              variant="h5"
+              className="offers-header offers-header-activities"
+              gutterBottom
+              sx={{ textAlign: 'center' }}
+            >
+              <FaBiking className="offers-section-icon" /> Activities
             </Typography>
-          )}
-        </Grid>
+            {offers.activity_offers.length > 0 ? (
+              <div className="offers-gallery">
+                {offers.activity_offers.map((offer) => (
+                  <div className="offers-gallery-item" key={offer.id}>
+                    <ActivityCard activity={offer} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Typography className="offers-no-items">
+                No activity offers available
+              </Typography>
+            )}
+          </div>
 
-        <Typography
-          variant="h5"
-          component="h2"
-          className="fancy-section-title"
-        >
-          <FaBoxes className="fancy-section-icon" /> Packages
-        </Typography>
-        <Grid container spacing={2} className="fancy-offers-section">
-          {offers.package_offers.length > 0 ? (
-            offers.package_offers.map((offer) => (
-              <Grid item xs={12} sm={6} md={4} key={offer.id}>
-                <PackageCard pkg={offer} className="fancy-offer-card" />
-              </Grid>
-            ))
-          ) : (
-            <Typography className="fancy-no-offers">
-              No package offers available
+          {/* Packages Section */}
+          <div className="fancy-offers-section">
+            <Typography
+              variant="h5"
+              className="offers-header offers-header-packages"
+              gutterBottom
+              sx={{ textAlign: 'center' }}
+            >
+              <FaSuitcaseRolling className="offers-section-icon" /> Packages
             </Typography>
-          )}
-        </Grid>
+            {offers.package_offers.length > 0 ? (
+              <div className="offers-gallery">
+                {offers.package_offers.map((offer) => (
+                  <div className="offers-gallery-item" key={offer.id}>
+                    <PackageCard pkg={offer} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Typography className="offers-no-items">
+                No package offers available
+              </Typography>
+            )}
+          </div>
 
-        <Typography
-          variant="h5"
-          component="h2"
-          className="fancy-section-title"
-        >
-          <FaRoute className="fancy-section-icon" /> Tours
-        </Typography>
-        <Grid container spacing={2} className="fancy-offers-section">
-          {offers.tour_offers.length > 0 ? (
-            offers.tour_offers.map((offer) => (
-              <Grid item xs={12} sm={6} md={4} key={offer.id}>
-                <TourCard tour={offer} className="fancy-offer-card" />
-              </Grid>
-            ))
-          ) : (
-            <Typography className="fancy-no-offers">
-              No tour offers available
+          {/* Tours Section */}
+          <div className="fancy-offers-section">
+            <Typography
+              variant="h5"
+              className="offers-header offers-header-tours"
+              gutterBottom
+              sx={{ textAlign: 'center' }}
+            >
+              <FaRouteIcon className="offers-section-icon" /> Tours
             </Typography>
-          )}
-        </Grid>
+            {offers.tour_offers.length > 0 ? (
+              <div className="offers-gallery">
+                {offers.tour_offers.map((offer) => (
+                  <div className="offers-gallery-item" key={offer.id}>
+                    <TourCard tour={offer} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Typography className="offers-no-items">
+                No tour offers available
+              </Typography>
+            )}
+          </div>
+        </TabPanel>
 
-        <FormControl variant="outlined" className="fancy-filter-control">
-          <InputLabel>Filter</InputLabel>
-          <Select
-            value={filter}
-            onChange={handleFilterChange}
-            label="Filter"
-            className="fancy-filter-select"
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="paid">Paid</MenuItem>
-            <MenuItem value="unpaid">Unpaid</MenuItem>
-            <MenuItem value="confirmed">Confirmed</MenuItem>
-            <MenuItem value="unconfirmed">Unconfirmed</MenuItem>
-          </Select>
-        </FormControl>
+        {/* Bookings */}
+        <TabPanel value={tabValue} index={3}>
+          <div className="bookings-filter">
+            <FormControl variant="outlined" className="fancy-filter-control">
+              <InputLabel>Filter</InputLabel>
+              <Select
+                value={filter}
+                onChange={handleFilterChange}
+                label="Filter"
+                className="fancy-filter-select"
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="paid">Paid</MenuItem>
+                <MenuItem value="unpaid">Unpaid</MenuItem>
+                <MenuItem value="confirmed">Confirmed</MenuItem>
+                <MenuItem value="unconfirmed">Unconfirmed</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
 
-        <Grid container spacing={4} direction="column">
-          <Grid item className="fancy-booking-section">
-            <Card className="fancy-booking-card-container">
-              <CardContent>
-                <Typography variant="h6" component="h3">
-                  <FaTasks className="fancy-section-icon" /> Activity Bookings
-                </Typography>
-                {renderBookingList(activityBookings, 'activity')}
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item className="fancy-booking-section">
-            <Card className="fancy-booking-card-container">
-              <CardContent>
-                <Typography variant="h6" component="h3">
-                  <FaBoxes className="fancy-section-icon" /> Package Bookings
-                </Typography>
-                {renderBookingList(packageBookings, 'package')}
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item className="fancy-booking-section">
-            <Card className="fancy-booking-card-container">
-              <CardContent>
-                <Typography variant="h6" component="h3">
-                  <FaRoute className="fancy-section-icon" /> Tour Bookings
-                </Typography>
-                {renderBookingList(tourBookings, 'tour')}
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+          <Divider sx={{ margin: '24px 0' }} />
+
+          {/* Activity Bookings Table */}
+          <Typography variant="h6" className="bookings-subtitle">
+            <FaTasks style={{ marginRight: 6 }} />
+            Activity Bookings
+          </Typography>
+          {renderBookingsTable(activityBookings, 'activity')}
+
+          <Divider sx={{ margin: '24px 0' }} />
+
+          {/* Package Bookings Table */}
+          <Typography variant="h6" className="bookings-subtitle">
+            <FaBoxes style={{ marginRight: 6 }} />
+            Package Bookings
+          </Typography>
+          {renderBookingsTable(packageBookings, 'package')}
+
+          <Divider sx={{ margin: '24px 0' }} />
+
+          {/* Tour Bookings Table */}
+          <Typography variant="h6" className="bookings-subtitle">
+            <FaRoute style={{ marginRight: 6 }} />
+            Tour Bookings
+          </Typography>
+          {renderBookingsTable(tourBookings, 'tour')}
+        </TabPanel>
       </Container>
     </LocalizationProvider>
   );

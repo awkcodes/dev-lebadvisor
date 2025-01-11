@@ -350,3 +350,219 @@ button.MuiButton-contained:hover {
   border-radius: 0px;
 }
 }
+
+/*************************************************
+  VIBRANT TOURISM REVIEWS STYLING (FEWER BORDERS)
+*************************************************/
+.reviews-section-vibrant {
+  margin-top: 40px;
+  padding: 24px;
+  border-radius: 10px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 153, 0, 0.07) 0%,
+    rgba(0, 150, 255, 0.08) 100%
+  );
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease forwards;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Subtle upward fade-in animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reviews-title-vibrant {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #ff6600; /* Sunset orange */
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.reviews-title-vibrant::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background-color: #ffaa66;
+  margin-top: 5px;
+  border-radius: 2px;
+  animation: extendLine 0.4s ease forwards;
+}
+
+@keyframes extendLine {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 60px;
+  }
+}
+
+.single-review-vibrant {
+  background-color: #ffffffcc;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.single-review-vibrant:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.review-header-vibrant {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.review-username-vibrant {
+  font-weight: 600;
+  color: #ff6600;
+}
+
+.review-stars-vibrant {
+  color: #00b8e6;
+}
+
+.review-text-vibrant {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.review-divider-vibrant {
+  margin-top: 14px;
+  border: none;
+  border-top: 1px solid #eee;
+  width: 100%;
+}
+
+.no-reviews-vibrant {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  background-color: #ffffffcc;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.leave-review-title-vibrant {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #00aaff;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  display: inline-block;
+  position: relative;
+}
+
+.leave-review-title-vibrant::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background-color: #00c0ff;
+  margin-top: 6px;
+  border-radius: 1px;
+  animation: extendLine 0.4s ease forwards;
+}
+
+.review-form-vibrant {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #ffffffaa;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.leave-rating-vibrant {
+  color: #ff6600;
+}
+
+.review-textfield-vibrant {
+  width: 100%;
+}
+
+.submit-review-btn-vibrant {
+  align-self: flex-end;
+  background-color: #00aaff;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  border-radius: 6px;
+  padding: 8px 20px;
+}
+
+.submit-review-btn-vibrant:hover {
+  background-color: #008fd1;
+  transform: scale(1.03);
+}
+
+/* Optionally, add floating background shapes for subtle vibrancy */
+.reviews-section-vibrant::before,
+.reviews-section-vibrant::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  opacity: 0.25;
+  border-radius: 50%;
+}
+
+.reviews-section-vibrant::before {
+  width: 140px;
+  height: 140px;
+  background: #ffaf40;
+  top: -40px;
+  left: -40px;
+  animation: floatBubble1 8s ease-in-out infinite alternate;
+}
+
+.reviews-section-vibrant::after {
+  width: 100px;
+  height: 100px;
+  background: #00c0ff;
+  bottom: -30px;
+  right: -30px;
+  animation: floatBubble2 7s ease-in-out infinite alternate;
+}
+
+@keyframes floatBubble1 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(25px, 25px);
+  }
+}
+
+@keyframes floatBubble2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-15px, 15px) scale(1.1);
+  }
+}

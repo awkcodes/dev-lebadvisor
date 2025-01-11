@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "tinymce",
     "blog",
+    'reviews',
 ]
 
 TINYMCE_DEFAULT_CONFIG = {

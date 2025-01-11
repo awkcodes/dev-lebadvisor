@@ -1,197 +1,383 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // for programmatic navigation
 import {
-  CircularProgress,
   Container,
+  CircularProgress,
+  Alert,
   Grid,
   Typography,
   Card,
   CardContent,
   CardHeader,
-  Alert
+  Box
 } from '@mui/material';
 import {
-  FaDollarSign,
-  FaClock,
-  FaCalendarAlt,
-  FaShoppingCart,
-  FaCheck,
-  FaTimes,
-  FaQrcode,
   FaBookmark,
   FaHistory,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaDollarSign,
+  FaShoppingCart,
+  FaCalendarAlt,
+  FaClock,
+  FaCheck,
+  FaTimes,
+  FaQrcode
 } from 'react-icons/fa';
-import api, { MainUrl } from '../services/api';
-import './Booking.css';
 
-const Bookings = () => {
+import api, { MainUrl } from '../services/api';
+import './CustomerBookingPage.css'; // The improved stacked design CSS
+
+const CustomerBookingPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Bookings from your three endpoints
   const [activityBookings, setActivityBookings] = useState([]);
   const [packageBookings, setPackageBookings] = useState([]);
   const [tourBookings, setTourBookings] = useState([]);
-  const today = new Date();
 
-  const isBookingStillValid = (bookingDay) => {
-    const bookingDate = new Date(bookingDay);
-    return bookingDate >= today;
-  };
+  const today = new Date();
+  const isBookingStillValid = (bookingDay) => new Date(bookingDay) >= today;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const activitiesResponse = await api.get('/api/customer/bookings/');
-        const packagesResponse = await api.get('/api/customer/packagesb/');
-        const toursResponse = await api.get('/api/customer/toursb/');
-
-        setActivityBookings(activitiesResponse.data);
-        setPackageBookings(packagesResponse.data);
-        setTourBookings(toursResponse.data);
+        // Activity, Package, Tour bookings
+        const [actRes, pkgRes, tourRes] = await Promise.all([
+          api.get('/api/customer/bookings/'),
+          api.get('/api/customer/packagesb/'),
+          api.get('/api/customer/toursb/')
+        ]);
+        setActivityBookings(actRes.data || []);
+        setPackageBookings(pkgRes.data || []);
+        setTourBookings(tourRes.data || []);
       } catch (err) {
         setError(err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchBookings();
   }, []);
 
-  if (loading) return <Container className="fancy-container"><CircularProgress /></Container>;
-  if (error) return <Container className="fancy-container"><Alert severity="error">Error loading bookings: {error.message}</Alert></Container>;
-
+  // Filter logic to separate bookings into main/history/expired
   const filterBookings = (bookings, getDate, getPaid, getConfirmed) => {
-    const main = bookings.filter(booking => !getPaid(booking) && isBookingStillValid(getDate(booking)));
-    const history = bookings.filter(booking => getConfirmed(booking) && getPaid(booking));
-    const expired = bookings.filter(booking => !getConfirmed(booking) && !getPaid(booking) && !isBookingStillValid(getDate(booking)));
+    const main = bookings.filter((b) => !getPaid(b) && isBookingStillValid(getDate(b)));
+    const history = bookings.filter((b) => getConfirmed(b) && getPaid(b));
+    const expired = bookings.filter(
+      (b) => !getConfirmed(b) && !getPaid(b) && !isBookingStillValid(getDate(b))
+    );
     return { main, history, expired };
   };
 
-  const activityData = filterBookings(activityBookings, booking => booking.period.day, booking => booking.paid, booking => booking.confirmed);
-  const packageData = filterBookings(packageBookings, booking => booking.end_date, booking => booking.paid, booking => booking.confirmed);
-  const tourData = filterBookings(tourBookings, booking => booking.tourday.day, booking => booking.paid, booking => booking.confirmed);
+  // Activity bookings: use b.period.day as date
+  const activityData = filterBookings(
+    activityBookings,
+    (b) => b.period.day,
+    (b) => b.paid,
+    (b) => b.confirmed
+  );
+  // Package: typically use b.end_date as date
+  const packageData = filterBookings(
+    packageBookings,
+    (b) => b.end_date,
+    (b) => b.paid,
+    (b) => b.confirmed
+  );
+  // Tour: use b.tourday.day as date
+  const tourData = filterBookings(
+    tourBookings,
+    (b) => b.tourday.day,
+    (b) => b.paid,
+    (b) => b.confirmed
+  );
 
+  // Merge them: main, history, expired
   const combinedBookings = {
     main: [...activityData.main, ...packageData.main, ...tourData.main],
     history: [...activityData.history, ...packageData.history, ...tourData.history],
     expired: [...activityData.expired, ...packageData.expired, ...tourData.expired]
   };
 
-  const renderBookingList = (bookings) => (
-    <Grid container spacing={2}>
-      {bookings.length > 0 ? bookings.map(booking => {
-        // Extract necessary data with safe checks
-        const activityImage = booking.period?.activity_offer?.activity?.image || '';
-        const tourImage = booking.tourday?.tour_offer?.tour?.image || '';
-        const packageImage = booking.package_offer?.package?.image || '';
+  // Dynamically navigate to the correct offer details page
+  const handleOfferClick = (booking) => {
+    const actId = booking.period?.activity_offer?.activity?.id;
+    const pkgId = booking.package_offer?.package?.id;
+    const tourId = booking.tourday?.tour_offer?.tour?.id;
 
-        const title = booking.period?.activity_offer?.activity?.title ||
-                      booking.tourday?.tour_offer?.tour?.title ||
-                      booking.package_offer?.package?.title ||
-                      'Booking';
-        const offerTitle = booking.period?.activity_offer?.title ||
-                         booking.tourday?.tour_offer?.title ||
-                         booking.package_offer?.title ||
-                         'Offer';
-        const unit = booking.period?.activity_offer?.activity?.unit ||
-                     booking.tourday?.tour_offer?.tour?.unit ||
-                     booking.package_offer?.package?.unit ||
-                     'unit';
+    if (actId) {
+      navigate(`/activity-details/${actId}`);
+    } else if (pkgId) {
+      navigate(`/package-details/${pkgId}`);
+    } else if (tourId) {
+      navigate(`/tour-details/${tourId}`);
+    } else {
+      console.warn('Could not determine booking type for:', booking.id);
+    }
+  };
 
-        const price = booking.price;
-        const day = booking.period?.day ||
-                    booking.tourday?.day ||
-                    booking.start_date;
+  // Renders each booking in a stacked card layout
+  const renderStackedBookings = (bookings) => {
+    if (!bookings.length) {
+      return (
+        <Typography className="no-bookings-stacked">
+          No bookings available
+        </Typography>
+      );
+    }
 
-        const startTime = booking.period?.time_from ||
-                          booking.tourday?.time_from ||
-                          booking.start_date;
+    return bookings.map((booking) => {
+      // Common fields
+      const title =
+        booking.period?.activity_offer?.activity?.title ||
+        booking.tourday?.tour_offer?.tour?.title ||
+        booking.package_offer?.package?.title ||
+        'Booking';
 
-        const endTime = booking.period?.time_to ||
-                        booking.tourday?.time_to ||
-                        booking.end_date;
+      const offerTitle =
+        booking.period?.activity_offer?.title ||
+        booking.tourday?.tour_offer?.title ||
+        booking.package_offer?.title ||
+        'Offer';
 
-        return (
-          <Grid item xs={12} sm={6} md={4} key={booking.id}>
-            <Card className="fancy-booking-card">
-              {activityImage || tourImage || packageImage ? (
-                <img 
-                  src={`${MainUrl}/${activityImage || tourImage || packageImage}`} 
-                  className="fancy-booking-image"
-                  alt="Booking"
-                />
-              ) : null}
-              <CardContent className="fancy-booking-content">
-                <Typography variant="h6" component="h2" className="fancy-booking-title">
-                  {title}
-                </Typography>
-                <Typography variant="subtitle1" component="h3" className="fancy-booking-offer-title">
-                Offer: {offerTitle}
-              </Typography>
-                <Typography variant="body2" className="fancy-booking-detail fancy-label">
-                  <FaDollarSign className="icon-inline" /> Price:
-                  <span className="fancy-booking-value"> ${price}</span>
-                </Typography>
-                <Typography variant="body2" className="fancy-booking-detail fancy-label">
-                  <FaShoppingCart className="icon-inline" /> Quantity:
-                  <span className="fancy-booking-value"> {booking.quantity} {unit}</span>
-                </Typography>
-                <Typography variant="body2" className="fancy-booking-detail fancy-label">
-                  <FaCalendarAlt className="icon-inline" /> Day:
-                  <span className="fancy-booking-value"> {day}</span>
-                </Typography>
-                <Typography variant="body2" className="fancy-booking-detail fancy-label">
-                  <FaClock className="icon-inline" /> Starts at:
-                  <span className="fancy-booking-value"> {startTime}</span>
-                </Typography>
-                <Typography variant="body2" className="fancy-booking-detail fancy-label">
-                  <FaClock className="icon-inline" /> Ends at:
-                  <span className="fancy-booking-value"> {endTime}</span>
-                </Typography>
-                <Typography variant="body1" className={`fancy-booking-status ${booking.paid ? 'paid' : 'unpaid'}`}>
-                  {booking.paid ? <><FaCheck className="icon-inline" /> Paid</> : <><FaTimes className="icon-inline" /> Unpaid</>}
-                </Typography>
-                <Typography variant="body1" className={`fancy-booking-status ${booking.confirmed ? 'confirmed' : 'not-confirmed'}`}>
-                  {booking.confirmed ? <><FaCheck className="icon-inline" /> Confirmed</> : <><FaTimes className="icon-inline" /> Not confirmed</>}
-                </Typography>
-                {booking.confirmed && booking.qr_code && (
-                  <div>
-                    <Typography variant="body2"><FaQrcode className="icon-inline" /> QR Code:</Typography>
-                    <img src={`${MainUrl}${booking.qr_code}`} alt="QR Code" className="qr-code" />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
+      // Price & Quantity
+      const price = booking.price || 0;
+      const quantity = booking.quantity || 1;
+
+      // The 'day' field
+      const day =
+        booking.period?.day ||
+        booking.tourday?.day ||
+        booking.start_date; // fallback if needed
+
+      // For the start/end time:
+      // Activities: use booking.period.time_from / booking.period.time_to
+      // Tours: use booking.tourday.tour_offer.tour.pickup_time / .dropoff_time
+      // Packages: typically no "time" for a single day, so fallback to booking.start_date / booking.end_date
+      let startTime, endTime;
+      if (booking.period) {
+        // It's an activity
+        startTime = booking.period.time_from;
+        endTime = booking.period.time_to;
+      } else if (booking.tourday) {
+        // It's a tour
+        startTime = booking.tourday.tour_offer?.tour?.pickup_time;   // use pickup_time
+        endTime = booking.tourday.tour_offer?.tour?.dropoff_time;    // use dropoff_time
+      } else if (booking.package_offer) {
+        // It's a package
+        startTime = booking.start_date;
+        endTime = booking.end_date;
+      } else {
+        // fallback
+        startTime = booking.start_date;
+        endTime = booking.end_date;
+      }
+
+      // Paid or Not
+      const paidElem = booking.paid ? (
+        <span className="badge-paid">
+          <FaCheck className="icon-inline" />
+          Paid
+        </span>
+      ) : (
+        <span className="badge-unpaid">
+          <FaTimes className="icon-inline" />
+          Unpaid
+        </span>
+      );
+
+      // Confirmed or Not
+      const confirmedElem = booking.confirmed ? (
+        <span className="badge-confirmed">
+          <FaCheck className="icon-inline" />
+          Confirmed
+        </span>
+      ) : (
+        <span className="badge-not-confirmed">
+          <FaTimes className="icon-inline" />
+          Not Confirmed
+        </span>
+      );
+
+      // Possibly show QR code
+      let qrElem = <span className="no-qr">N/A</span>;
+      if (booking.confirmed && booking.qr_code) {
+        qrElem = (
+          <div className="qr-code-stacked">
+            <FaQrcode className="icon-inline" />
+            <img
+              src={`${MainUrl}${booking.qr_code}`}
+              alt="QR Code"
+              className="qr-image"
+            />
+          </div>
         );
-      }) : <Typography className="fancy-no-bookings">No bookings available</Typography>}
-    </Grid>
-  );
+      }
+
+      return (
+        <Card
+          key={booking.id}
+          className="stacked-booking-card"
+          onClick={() => handleOfferClick(booking)}
+        >
+          <CardContent>
+            {/* Title */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                Title:
+              </Typography>
+              <Typography variant="body2" className="stacked-title clickable">
+                {title}
+              </Typography>
+            </Box>
+
+            {/* Offer */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                Offer:
+              </Typography>
+              <Typography variant="body2">{offerTitle}</Typography>
+            </Box>
+
+            {/* Price */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                <FaDollarSign className="icon-inline" /> Price:
+              </Typography>
+              <Typography variant="body2">${price}</Typography>
+            </Box>
+
+            {/* Quantity */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                <FaShoppingCart className="icon-inline" /> Quantity:
+              </Typography>
+              <Typography variant="body2">{quantity}</Typography>
+            </Box>
+
+            {/* Day */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                <FaCalendarAlt className="icon-inline" /> Day:
+              </Typography>
+              <Typography variant="body2">{day}</Typography>
+            </Box>
+
+            {/* Start Time */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                <FaClock className="icon-inline" /> Starts:
+              </Typography>
+              <Typography variant="body2">{startTime?.toString()}</Typography>
+            </Box>
+
+            {/* End Time */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                <FaClock className="icon-inline" /> Ends:
+              </Typography>
+              <Typography variant="body2">{endTime?.toString()}</Typography>
+            </Box>
+
+            {/* Paid */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                Paid:
+              </Typography>
+              {paidElem}
+            </Box>
+
+            {/* Confirmed */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                Confirmed:
+              </Typography>
+              {confirmedElem}
+            </Box>
+
+            {/* QR Code */}
+            <Box className="stacked-row">
+              <Typography variant="subtitle2" className="stacked-label">
+                QR Code:
+              </Typography>
+              {qrElem}
+            </Box>
+          </CardContent>
+        </Card>
+      );
+    });
+  };
+
+  if (loading) {
+    return (
+      <Container className="stacked-container">
+        <CircularProgress className="stacked-loading" />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="stacked-container">
+        <Alert severity="error" className="stacked-error">
+          Error loading bookings: {error.message}
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
-    <Container className="fancy-container">
+    <Container className="stacked-container">
       <Grid container spacing={4} direction="column">
+        {/* Active Bookings */}
         <Grid item>
-          <Card className="fancy-booking-card-container">
-            <CardHeader title={<><FaBookmark className="icon-inline" /> Active Bookings</>} />
+          <Card className="stacked-section-card fancy-hover">
+            <CardHeader
+              className="stacked-section-header"
+              title={
+                <span className="section-title">
+                  <FaBookmark className="icon-inline" /> Active Bookings
+                </span>
+              }
+            />
             <CardContent>
-              {renderBookingList(combinedBookings.main)}
+              {renderStackedBookings(combinedBookings.main)}
             </CardContent>
           </Card>
         </Grid>
+
+        {/* History */}
         <Grid item>
-          <Card className="fancy-booking-card-container">
-            <CardHeader title={<><FaHistory className="icon-inline" /> History Bookings</>} />
+          <Card className="stacked-section-card fancy-hover">
+            <CardHeader
+              className="stacked-section-header"
+              title={
+                <span className="section-title">
+                  <FaHistory className="icon-inline" /> History Bookings
+                </span>
+              }
+            />
             <CardContent>
-              {renderBookingList(combinedBookings.history)}
+              {renderStackedBookings(combinedBookings.history)}
             </CardContent>
           </Card>
         </Grid>
+
+        {/* Expired */}
         <Grid item>
-          <Card className="fancy-booking-card-container">
-            <CardHeader title={<><FaExclamationTriangle className="icon-inline" /> Expired Bookings</>} />
+          <Card className="stacked-section-card fancy-hover">
+            <CardHeader
+              className="stacked-section-header"
+              title={
+                <span className="section-title">
+                  <FaExclamationTriangle className="icon-inline" /> Expired Bookings
+                </span>
+              }
+            />
             <CardContent>
-              {renderBookingList(combinedBookings.expired)}
+              {renderStackedBookings(combinedBookings.expired)}
             </CardContent>
           </Card>
         </Grid>
@@ -200,4 +386,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default CustomerBookingPage;

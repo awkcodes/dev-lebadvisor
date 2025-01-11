@@ -79,7 +79,8 @@ class TourSerializer(serializers.ModelSerializer):
     )
     faqs = FaqSerializer(many=True, read_only=True, source="faq_set")
     catalogs = CatalogSerializer(many=True, read_only=True, source="catalog_set")
-
+    average_rating = serializers.FloatField(read_only=True)
+    reviews_count = serializers.IntegerField(read_only=True)
     location = LocationSerializer()
     itinerary = ItineraryStepSerializer(
         many=True, read_only=True, source="itinerary_steps"

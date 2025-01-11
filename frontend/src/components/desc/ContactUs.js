@@ -44,23 +44,14 @@ const ContactUs = () => {
                 ></iframe>
             </div>
 
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                margin: '20px 0',
-                gap: '10px'
-            }}>
-                <p style={{ fontSize: '1.2rem', textAlign: 'center' }}>
-                    3indak trip? Become a LebAdvisor and add your own trip
+            {/* Advanced styling for "3indak trip?" */}
+            <div className="trip-container">
+                <p className="trip-text">
+                    3indak trip? <span>Become a LebAdvisor and add your own trip</span>
                 </p>
-                <FontAwesomeIcon 
-                    icon={faWhatsapp} 
-                    style={{
-                        color: '#25D366',
-                        fontSize: '2rem',
-                        cursor: 'pointer'
-                    }}
+                <FontAwesomeIcon
+                    icon={faWhatsapp}
+                    className="trip-whatsapp-icon"
                     onClick={handleWhatsAppClick}
                 />
             </div>

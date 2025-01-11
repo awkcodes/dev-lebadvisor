@@ -33,6 +33,7 @@ from activities.views import (
     get_all_activities,
     reserve_activity,
     block_activity_day,
+    add_stock_to_periods,
 )
 from packages.views import (
     get_packages,
@@ -41,6 +42,7 @@ from packages.views import (
     get_all_packages,
     reserve_package,
     block_package_day,
+    add_stock_to_package_day,
 )
 from tours.views import (
     get_tours,
@@ -49,10 +51,11 @@ from tours.views import (
     get_all_tours,
     reserve_tour,
     block_tourday,
+    add_stock_to_tour_day,
 )
 from location.views import get_locations, get_sublocations
 from notifications.views import notification_list, mark_notification_as_read
-from .views import latest_items_api, featured_items_api, search, for_you_items
+from .views import latest_items_api, featured_items_api, family_picks_api, seasonal_highlights_api, local_favorites_api, search, for_you_items
 from favorites.views import (
     favorite_activity,
     favorite_tour,
@@ -66,8 +69,11 @@ router = DefaultRouter()
 router.register(r"posts", PostViewSet)
 
 urlpatterns = [
+    path("add-package-day-stock/", add_stock_to_package_day, name="add_stock_to_package_day"),
+    path("add-tour-day-stock/", add_stock_to_tour_day, name="add_stock_to_tour_day"),
     path("for-you/", for_you_items, name="for_you"),
     path("reserve-activity/", reserve_activity, name="reserve_activity"),
+    path("add-period-stock/", add_stock_to_periods, name="add_stock_to_periods"),
     path("block-activity-day/", block_activity_day, name="block_activity_day"),
     path("reserve-tour/", reserve_tour, name="reserve_tour"),
     path("block-tour-day/", block_tourday, name="block_tour_day"),
@@ -187,4 +193,8 @@ urlpatterns = [
     path(
         "supplier/customers-per-month/", customers_per_month, name="customers-per-month"
     ),
+    path('reviews/', include('reviews.urls')),
+    path('family-picks/', family_picks_api, name='family-picks'),
+    path('seasonal-highlights/', seasonal_highlights_api, name='seasonal-highlights'),
+    path('local-favorites/', local_favorites_api, name='local-favorites'),
 ]

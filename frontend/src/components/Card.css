@@ -80,7 +80,7 @@
 
 .card:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .card:hover img {
@@ -128,4 +128,39 @@
   .card-content {
     padding: 10px;
   }
+}
+
+.card-rating-row-inline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.card-icon.star-icon {
+  font-size: 18px;
+  color: #ccc; /* Default for empty stars */
+}
+
+.card-icon.star-icon.filled-star {
+  color: #FFD700; /* Gold color for full stars */
+}
+
+.card-icon.star-icon.half-star {
+  background: linear-gradient(to right, #FFD700 50%, #ccc 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 18px;
+}
+
+.card-rating-value {
+  font-size: 14px;
+  color: #555;
+  margin-left: 5px;
+}
+
+.card-reviews-count {
+  color: #888;
+  font-size: 12px;
+  margin-left: 3px;
 }

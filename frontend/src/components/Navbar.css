@@ -1,113 +1,80 @@
-/* General Styles */
 .navbar {
-    background: white;
-    padding: 20px;
-  }
-  
-  .lb-logo {
-    cursor: pointer;
-    flex-grow: 1;
-    height: 60px;
-  }
-  
-  .notification-button {
-    color: white;
-    background-color: #017599;
-    padding: 9px;
-    margin-right: 10px;
-  }
-  
-  .not-icon {
-    color: white;
-  }
-  
-  .read-all {
-    color: darkorange;
-    font-weight: bold;
-  }
-  
-  .user-icon {
-    background-color: #f58529;
-  }
-  
-  /* Menu Styles */
-  .nav-menu .MuiMenu-paper {
-    margin-top: 45px;
-    max-width: 90vw; /* Limit the width to avoid overflow */
-    left: auto !important; /* Override positioning to prevent overflow */
-    right: 10px !important;
-  }
-  
-  li.MuiMenuItem-root {
-    white-space: normal; /* Allow text to wrap */
-    word-wrap: break-word; /* Ensure long words break to fit within the container */
-    overflow-wrap: break-word; /* Ensure long words break to fit within the container */
-  }
-  
-  /* Responsive Styles */
-  @media screen and (max-width: 600px) {
-    .navbar {
-      padding: 10px;
-      padding-left:5px;
-    }
-  
-    .lb-logo {
-      width: 40vw;
-      height: auto;
-      margin-top: 10px;
-    }
-  
-    .notification-button {
-      padding: 6px;
-      margin-right: 5px;
-    }
-  
-    .not-icon {
-      font-size: 1rem;
-    }
-  
-    .user-icon {
-      width: 30px;
-      height: 30px;
-      font-size: 0.875rem;
-    }
-  
-    .MuiIconButton-root {
-      padding: 5px;
-    }
-  
-    .MuiTypography-h6 {
-      font-size: 1rem;
-    }
-  
-    .MuiBadge-badge {
-      font-size: 0.75rem;
-    }
-  
-    .nav-menu .MuiMenu-paper {
-      width: 100vw; /* Make sure the menu fits within the viewport width */
-      left: 0 !important; /* Ensure the menu aligns with the viewport */
-      right: 0 !important; /* Ensure the menu aligns with the viewport */
-      max-width: 100%; /* Prevent the menu from causing overflow */
-    }
-  
-    .MuiMenuItem-root {
-      white-space: normal; /* Allow text to wrap */
-      word-wrap: break-word; /* Ensure long words break to fit within the container */
-      overflow-wrap: break-word; /* Ensure long words break to fit within the container */
-    }
-  }
+  background: white;
+  padding: 20px;
+}
 
+.navbar-toolbar {
+  /* default horizontal layout on desktop */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.lb-logo {
+  cursor: pointer;
+  height: 50px;
+  /* On desktop, no fixed width. We'll handle mobile below. */
+}
+
+/* Notification button styling */
+.notification-button {
+  color: #fff;
+  background-color: #017599;
+  padding: 9px;
+  transition: background-color 0.3s;
+}
+
+.notification-button:hover {
+  background-color: #f58529;
+}
+
+.not-icon {
+  color: #fff;
+}
+
+.read-all {
+  color: darkorange;
+  font-weight: bold;
+}
+
+.user-icon {
+  background-color: #f58529;
+}
+
+/* Burger icon bigger & centered */
+.burger-icon {
+  font-size: 1.8rem;
+  color: #017599;
+}
+
+/* Menu paper overrides */
+.nav-menu .MuiMenu-paper {
+  margin-top: 45px;
+  max-width: 90vw;
+  left: auto !important;
+  right: 10px !important;
+}
+
+li.MuiMenuItem-root {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Desktop menu items */
 .desktop-menu {
   display: flex;
   gap: 20px;
   align-items: center;
+  font-family: "Oswald", sans-serif;
 }
 
 .desktop-menu .MuiButton-root {
   color: #017599;
-  font-weight: 500;
+  font-weight: 500;  /* Bolder font */
   text-transform: none;
+  font-size: 1.15rem; /* Larger font */
 }
 
 .desktop-menu .MuiButton-root:hover {
@@ -115,50 +82,100 @@
   background-color: rgba(245, 133, 41, 0.04);
 }
 
-.auth-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: auto;
-}
-
+/* Mobile menu icon hidden on desktop by default */
 .mobile-menu-button {
   display: none !important;
 }
 
+/* 
+  On mobile:
+  - We want 5% + 40% + 20% + 30% + 5% = 100%
+  - So we handle this with a specialized layout for .navbar-toolbar 
+*/
 @media screen and (max-width: 600px) {
+
   .desktop-menu {
     display: none;
   }
 
+  /* Our top toolbar re-layout */
+  .navbar-toolbar {
+    padding: 0 auto; /* 5% left, 5% right */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .mobile-menu-button {
-    display: block !important;
-    margin-left: auto;
+    display: flex !important;
+    /* 20% width for burger icon container */
+    width: 20%;
+    justify-content: center;
+    align-items: center;
   }
 
-  .auth-section {
-    margin-right: 10px;
+  /* Burger icon bigger on mobile */
+  .burger-icon {
+    font-size: 2.4rem;
+    color: #017599;
   }
 
-  .navbar {
-    padding: 10px;
+  /* Logo at 40% of the toolbar width on mobile */
+  .lb-logo {
+    width: 35%;
+    height: auto; 
   }
+
+  /* Example for sign-up or register button at 30% width 
+     (Use your actual button class, e.g., .sign-up-button) */
+  .sign-up-button, .login-button {
+    width: 30% !important;
+  }
+
+  /* If you want to hide the user controls or rearrange them, adjust accordingly. */
+
+  .notification-button {
+    padding: 6px;
+  }
+
+/* Notification icon styling */
+.not-icon {
+  color: #017599; /* Primary color used in the design */
+  transition: color 0.3s;
 }
-  
-.register-button {
-  font-size: 16px !important; /* Default size */
-  padding: 10px 20px !important; /* Default padding */
-  width: 100% !important; /* Full width for mobile */
-  margin: 10px 0 !important; /* Space around the button */
+
+.notification-button:hover .not-icon {
+  color: #f58529; /* Hover color consistent with other hover effects */
 }
 
-@media (max-width: 600px) {
-  .register-button {
-    font-size: 10px !important; /* Smaller font size for mobile */
-    padding: 8px 16px !important; /* Adjust padding for mobile */
-    width: 90% !important; /* Reduce width slightly for better alignment */
-    margin: 15px auto !important; /* Center the button */
-    display: block !important; /* Ensure block display */
+
+  .user-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 0.875rem;
+  }
+
+  .MuiIconButton-root {
+    padding: 5px;
+  }
+
+  .MuiBadge-badge {
+    font-size: 0.75rem;
+  }
+
+  .nav-menu .MuiMenu-paper {
+    width: 100vw;
+    left: 0 !important;
+    right: 0 !important;
+    max-width: 100%;
+  }
+
+  .MuiMenuItem-root {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 1rem; 
+    font-weight: 500; 
   }
 }
 
@@ -170,4 +187,40 @@
 .nav-menu .MuiMenuItem-root:hover {
   color: #f58529;
   background-color: rgba(245, 133, 41, 0.04);
+}
+
+/* Auth section usage (if needed) */
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.notification-button {
+  color: #017599;
+  background-color: transparent;
+  padding: 9px;
+  transition: background-color 0.3s;
+}
+
+.notification-button:hover {
+  background-color: rgba(245, 133, 41, 0.1);
+}
+
+.not-icon {
+  color: #017599;
+  font-size: 1.5rem;
+  transition: color 0.3s;
+}
+
+.notification-button:hover .not-icon {
+  color: #f58529;
+}
+
+.MuiBadge-badge {
+  background-color: #f58529;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
 }

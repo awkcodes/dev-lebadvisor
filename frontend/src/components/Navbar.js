@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { Divider } from '@mui/material';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/system';
@@ -11,8 +9,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { FaSearch } from 'react-icons/fa';
-import AuthPopup from './AuthPopup';
+import AuthPopup from './AuthPopup'; // Assume it provides Sign Up / Login
 import api from '../services/api.js';
 import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
@@ -20,8 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const Logo = styled('img')({
   cursor: 'pointer',
-  flexGrow: 1,
-  height: '60px',
+  height: '50px',
 });
 
 const Navbar = () => {
@@ -86,22 +82,16 @@ const Navbar = () => {
 
   const handleProfileOpen = () => {
     navigate('/profile');
-  }
-
-  const handleNotificationClick = () => {
-    navigate('/bookings');
   };
 
   const handleNotificationOpen = async (event) => {
     setNotificationAnchorEl(event.currentTarget);
-
-    // Mark notifications as read
     try {
       const unreadNotifications = notifications.filter(notification => !notification.read);
       for (const notification of unreadNotifications) {
         await api.put(`/api/readnotification/${notification.id}/`);
       }
-      fetchNotifications();  // Fetch notifications again to update the state
+      fetchNotifications();
     } catch (error) {
       console.error('Error marking notifications as read:', error);
     }
@@ -121,6 +111,10 @@ const Navbar = () => {
 
   const mainNavItems = (
     <div className="desktop-menu">
+      <Button color="inherit" onClick={() => navigate('/')}>Home</Button>
+      <Button color="inherit" onClick={() => navigate('/all-packages')}>Packages</Button>
+      <Button color="inherit" onClick={() => navigate('/all-tours')}>Tours</Button>
+      <Button color="inherit" onClick={() => navigate('/all-activities')}>Activities</Button>
       <Button color="inherit" onClick={() => navigate('/blog')}>Blog</Button>
       <Button color="inherit" onClick={handleAboutUs}>About Us</Button>
       <Button color="inherit" onClick={() => navigate('/contact-us')}>Contact Us</Button>
@@ -128,27 +122,26 @@ const Navbar = () => {
   );
 
   return (
-    <AppBar 
-        position="static"
-        style={{
-            background:"white",
-            padding:'20px',
-        }}
+    <AppBar
+      position="static"
+      style={{
+        background: "white",
+        padding: '20px',
+      }}
     >
-      <Toolbar>
-        <Typography onClick={() => navigate('/')} variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          <Logo className='lb-logo'
-            src="/lebadvisor_logo.png" 
-            alt="LebAdvisor Logo" 
-          />
-        </Typography>
+      <Toolbar className="navbar-toolbar">
+        <Logo 
+          onClick={() => navigate('/')} 
+          className='lb-logo'
+          src="/lebadvisor_logo.png"
+          alt="LebAdvisor Logo"
+        />
 
         <IconButton
           className="mobile-menu-button"
           onClick={handleMobileMenuOpen}
-          sx={{ marginRight: '10px' }}
         >
-          <MenuIcon style={{ color: '#017599' }} />
+          <MenuIcon className="burger-icon" />
         </IconButton>
 
         <Menu
@@ -157,29 +150,31 @@ const Navbar = () => {
           open={Boolean(mobileAnchorEl)}
           onClose={handleMobileMenuClose}
         >
-          <MenuItem onClick={() => { navigate('/blog'); handleMobileMenuClose(); }}>
-            Blog
-          </MenuItem>
-          <MenuItem onClick={() => { handleAboutUs(); handleMobileMenuClose(); }}>
-            About Us
-          </MenuItem>
-          <MenuItem onClick={() => { navigate('/contact-us'); handleMobileMenuClose(); }}>
-            Contact Us
-          </MenuItem>
+          <MenuItem onClick={() => { navigate('/'); handleMobileMenuClose(); }}>Home</MenuItem>
+          <MenuItem onClick={() => { navigate('/all-packages'); handleMobileMenuClose(); }}>Packages</MenuItem>
+          <MenuItem onClick={() => { navigate('/all-tours'); handleMobileMenuClose(); }}>Tours</MenuItem>
+          <MenuItem onClick={() => { navigate('/all-activities'); handleMobileMenuClose(); }}>Activities</MenuItem>
+          <MenuItem onClick={() => { navigate('/blog'); handleMobileMenuClose(); }}>Blog</MenuItem>
+          <MenuItem onClick={() => { handleAboutUs(); handleMobileMenuClose(); }}>About Us</MenuItem>
+          <MenuItem onClick={() => { navigate('/contact-us'); handleMobileMenuClose(); }}>Contact Us</MenuItem>
         </Menu>
 
-        {mainNavItems}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          {mainNavItems}
+        </div>
 
         {loggedInUser ? (
-          <div>
+          <>
             <IconButton
               className="notification-button"
               onClick={handleNotificationOpen}
+              sx={{ marginRight: '10px' }}
             >
               <Badge badgeContent={unreadCount} color="error">
                 <NotificationsIcon className="not-icon" />
               </Badge>
             </IconButton>
+
             <IconButton onClick={handleMenu}>
               <Avatar className='user-icon'>{loggedInUser[0].toUpperCase()}</Avatar>
             </IconButton>
@@ -195,7 +190,6 @@ const Navbar = () => {
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
 
-            {/* Notifications Menu */}
             <Menu
               className='nav-menu'
               anchorEl={notificationAnchorEl}
@@ -211,11 +205,15 @@ const Navbar = () => {
                 })
                 .slice(0, 10)
                 .map((notification) => (
-                  <MenuItem key={notification.id} onClick={handleNotificationClick} className="menu-item">
+                  <MenuItem
+                    key={notification.id}
+                    onClick={() => navigate('/bookings')}
+                    className="menu-item"
+                  >
                     {notification.message}
                   </MenuItem>
                 ))}
-              <MenuItem 
+              <MenuItem
                 onClick={() => navigate('/notifications')}
                 className="menu-item read-all"
                 style={{ color: 'darkorange', fontWeight: 'bold' }}
@@ -223,7 +221,7 @@ const Navbar = () => {
                 Read all
               </MenuItem>
             </Menu>
-          </div>
+          </>
         ) : (
           <AuthPopup />
         )}

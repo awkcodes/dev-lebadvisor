@@ -3,10 +3,18 @@ from users.models import Supplier
 from categories.models import Category, SubCategory
 from location.models import Location, SubLocation
 from datetime import timedelta
+from django.contrib.contenttypes.models import ContentType
+from reviews.models import Review
+from django.db.models import Avg
 
 
 class Package(models.Model):
+    average_rating = models.FloatField(default=0.0)
+    reviews_count = models.IntegerField(default=0)
     featured = models.BooleanField(default=False)
+    family = models.BooleanField(default=False)
+    seasonal = models.BooleanField(default=False)
+    local_favorites = models.BooleanField(default=False)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
@@ -32,6 +40,15 @@ class Package(models.Model):
     additional_info = models.TextField(blank=True, null=True)
     subcategories = models.ManyToManyField(SubCategory, related_name="packages", blank=True)
     sublocations = models.ManyToManyField(SubLocation, related_name="packages", blank=True)
+
+    def update_reviews(self):
+        reviews = Review.objects.filter(
+            content_type=ContentType.objects.get_for_model(self),
+            object_id=self.id
+        )
+        self.average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0.0
+        self.reviews_count = reviews.count()
+        self.save()
 
     def create_package_days(self):
         if not self.days_off:

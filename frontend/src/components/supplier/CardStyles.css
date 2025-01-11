@@ -1,0 +1,144 @@
+/* Advanced, modern card styling for supplier cards */
+.supplier-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+
+  /* Subtle gradient background & border for more depth */
+  background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+  border: 1px solid #e0e0e0;
+
+  /* More pronounced shadow & transition */
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  margin: 16px 0; /* Slightly larger vertical spacing */
+}
+
+/* Card Hover effect */
+.supplier-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Image container */
+.supplier-card-image-container {
+  width: 100%;
+  height: 200px; /* Slightly taller image for a more modern look */
+  overflow: hidden;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+}
+
+/* Optional overlay fade for the image */
+.supplier-card-image-container::before {
+  content: "";
+  position: absolute;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.supplier-card-image-container:hover::before {
+  opacity: 1;
+}
+
+.supplier-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.supplier-card-image:hover {
+  transform: scale(1.07); /* Slightly larger scale on hover */
+}
+
+/* Card content */
+.supplier-card-content {
+  flex-grow: 1;
+  padding: 20px 24px; /* More generous padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Title */
+.supplier-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 14px;
+  letter-spacing: 0.3px;
+}
+
+/* Spacing for fields and controls */
+.supplier-card-content .MuiFormControl-root,
+.supplier-card-content .MuiTextField-root,
+.supplier-card-content .supplier-card-actions {
+  margin-top: 18px !important; /* Force vertical spacing between fields */
+  margin-bottom: 4px;         /* Tiny bottom spacing for closer grouping */
+}
+
+/* Action section (buttons, etc.) */
+.supplier-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px !important; /* More vertical breathing room */
+}
+
+/* Success and error messages */
+.supplier-card-success {
+  margin-top: 16px;
+  color: #2e7d32; /* Material UI green 800 */
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.supplier-card-error {
+  margin-top: 16px;
+  color: #d32f2f; /* Material UI red 700 */
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Override for MUI elements if needed */
+.MuiFormControl-root {
+  margin-bottom: 16px !important;
+  /* Additional padding for clarity */
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 768px) {
+  .supplier-card {
+    margin: 20px 0;
+  }
+
+  .supplier-card-image-container {
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .supplier-card-content {
+    padding: 16px;
+  }
+
+  .supplier-card-title {
+    font-size: 1rem;
+  }
+
+  .supplier-card-actions {
+    flex-direction: column;
+  }
+}
