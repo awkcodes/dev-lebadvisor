@@ -11,6 +11,11 @@ from .views import (
         update_customer_locations_api,
         update_supplier_location_api,
         update_phone_api,
+        send_verification_code_api,
+        verify_phone_code_api,
+        forgot_password_send_code_api,
+        forgot_password_verify_code_api,
+        reset_password_api,
         )
 
 
@@ -30,4 +35,9 @@ urlpatterns = [
     path('update-email/', update_email_api, name='update_email'),
     path('update-password/', update_password_api, name='update_password'),
     path('update-phone/', update_phone_api, name='update_phone'),  # Added this line
+    path('send_verification_code/', send_verification_code_api, name='send_verification_code'),
+    path('verify_phone_code/', verify_phone_code_api, name='verify_phone_code'),
+    path('forgot_password_send_code/', forgot_password_send_code_api, name='forgot_password_send_code'),
+    path('forgot_password_verify_code/', forgot_password_verify_code_api, name='forgot_password_verify_code'),
+    path('reset_password/', reset_password_api, name='reset_password'),
 ]
