@@ -192,24 +192,51 @@ def logout_all_api(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def send_verification_code_api(request):
+    from .models import CustomUser, PhoneVerification
     phone_number = request.data.get('phone_number')
-    if not phone_number or not phone_number.startswith("961") or len(phone_number) != 11:
-        return Response({"detail": "Invalid phone number. Must be 961xxxxxxxx"}, status=400)
 
-    # Generate a 6-digit code
+    # 1) Missing phone
+    if not phone_number:
+        return Response({"detail": "Phone number is required."}, status=400)
+
+    # 2) Must start with "961"
+    if not phone_number.startswith("961"):
+        return Response({"detail": "Invalid phone format. Must start with 961."}, status=400)
+
+    # 3) Simple length check (customize this to your real rules)
+    if len(phone_number) < 10 or len(phone_number) > 15:  
+        return Response({"detail": "Invalid phone length."}, status=400)
+
+    # 4) Phone already used by an existing account
+    if CustomUser.objects.filter(phone=phone_number).exists():
+        return Response({"detail": "This phone number is already associated with another account."}, status=400)
+
+    # 5) Optional: if you want to handle leftover verification records
+    # (e.g. if phone_number is in PhoneVerification but user never completed verifying).
+    # You might choose to update_or_create instead, but here's an example:
+    # leftover = PhoneVerification.objects.filter(phone_number=phone_number).first()
+    # if leftover:
+    #     leftover.delete()  # or handle it differently
+
+    # 6) Success: generate code, store it, send via SMS
+    import random
+    from django.utils import timezone
+
     code = f"{random.randint(100000, 999999)}"
 
-    # Save or update the code in the database
     verification, created = PhoneVerification.objects.update_or_create(
         phone_number=phone_number,
         defaults={"code": code, "created_at": timezone.now()}
     )
 
-    # Send the SMS
+    from .sms_service import send_sms
     message = f"Your verification code is {code}"
+    
+    # If SMS sending fails, wrap in try/except or handle the error
     send_sms(phone_number, message)
 
-    return Response({"detail": "Verification code sent."})
+    return Response({"detail": "Verification code sent."}, status=200)
+
 
 
 @api_view(['POST'])

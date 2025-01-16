@@ -118,6 +118,11 @@ REST_FRAMEWORK = {
     ],
 }
 
+AUTHENTICATION_BACKENDS = [
+    'users.custom_auth.PhoneOrEmailBackend',  # your custom class
+    'django.contrib.auth.backends.ModelBackend',  # fallback
+]
+
 REST_KNOX = {
     "TOKEN_TTL": timedelta(days=15),
 }

@@ -161,32 +161,64 @@ def featured_items_api(request):
     return Response(data)
 
 
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def search(request):
-    query = request.GET.get("query", "")
+    """
+    Expects GET params:
+      ?keyword=...
+      &category=... (activities|tours|packages| blank => all)
+      &location=...
+      &theme_id=... (ID from the Category model)
+    Returns JSON of matched items in arrays: 'activities', 'tours', 'packages'.
+    """
 
-    if query:
-        activity_results = Activity.objects.filter(
-            Q(title__icontains=query)
-            | Q(description__icontains=query)
-            | Q(location__name__icontains=query)
-        )
-        tour_results = Tour.objects.filter(
-            Q(title__icontains=query)
-            | Q(description__icontains=query)
-            | Q(location__name__icontains=query)
-        )
-        package_results = Package.objects.filter(
-            Q(title__icontains=query)
-            | Q(description__icontains=query)
-            | Q(location__name__icontains=query)
-        )
-    else:
-        activity_results = Activity.objects.none()
-        tour_results = Tour.objects.none()
-        package_results = Package.objects.none()
+    keyword = request.GET.get("keyword", "").strip()
+    category = request.GET.get("category", "").strip()
+    location = request.GET.get("location", "").strip()
+    theme_id_str = request.GET.get("theme_id", "").strip()
 
+    activity_results = Activity.objects.none()
+    tour_results = Tour.objects.none()
+    package_results = Package.objects.none()
+
+    # Should we search each model?
+    consider_activities = (category == "") or (category.lower() == "activities")
+    consider_tours = (category == "") or (category.lower() == "tours")
+    consider_packages = (category == "") or (category.lower() == "packages")
+
+    def build_search_qs(model, kw, loc, theme_id):
+        qs = model.objects.all()
+
+        # location filter
+        if loc:
+            qs = qs.filter(location__name__icontains=loc)
+
+        # keyword filter on title, description, location
+        if kw:
+            qs = qs.filter(
+                Q(title__icontains=kw)
+                | Q(description__icontains=kw)
+                | Q(location__name__icontains=kw)
+            )
+
+        # theme_id filter => categories__id
+        if theme_id and theme_id.isdigit():
+            qs = qs.filter(categories__id=theme_id)
+
+        return qs.distinct()
+
+    if consider_activities:
+        activity_results = build_search_qs(Activity, keyword, location, theme_id_str)
+
+    if consider_tours:
+        tour_results = build_search_qs(Tour, keyword, location, theme_id_str)
+
+    if consider_packages:
+        package_results = build_search_qs(Package, keyword, location, theme_id_str)
+
+    # Serialize
     activity_serializer = ActivitySerializer(activity_results, many=True)
     tour_serializer = TourSerializer(tour_results, many=True)
     package_serializer = PackageSerializer(package_results, many=True)

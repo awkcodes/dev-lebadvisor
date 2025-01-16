@@ -1,33 +1,30 @@
+# activities/serializers.py
 from rest_framework import serializers
 from .models import Activity, Period, Included, Excluded, Faq, Catalog, ActivityOffer
 from users.models import Supplier
-from categories.models import Category
+from categories.models import Category, SubCategory
+from location.models import Location, SubLocation
 from location.serializers import LocationSerializer
-
 
 class IncludedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Included
         fields = ["id", "include"]
 
-
 class ExcludedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Excluded
         fields = ["id", "Exclude"]
-
 
 class FaqSerializer(serializers.ModelSerializer):
     class Meta:
         model = Faq
         fields = ["id", "question", "answer"]
 
-
 class CatalogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Catalog
         fields = ["id", "image"]
-
 
 class OffActivitySerializer(serializers.ModelSerializer):
     included_items = IncludedSerializer(
@@ -44,6 +41,14 @@ class OffActivitySerializer(serializers.ModelSerializer):
     )
     location = LocationSerializer()
 
+    # ADD subcategories and sublocations here if you want them in OffActivity too
+    subcategories = serializers.PrimaryKeyRelatedField(
+        queryset=SubCategory.objects.all(), many=True
+    )
+    sublocations = serializers.PrimaryKeyRelatedField(
+        queryset=SubLocation.objects.all(), many=True
+    )
+
     class Meta:
         model = Activity
         fields = [
@@ -58,6 +63,8 @@ class OffActivitySerializer(serializers.ModelSerializer):
             "available_from",
             "available_to",
             "categories",
+            "subcategories",       # new
+            "sublocations",        # new
             "stock",
             "period",
             "days_off",
@@ -86,8 +93,6 @@ class ActivityOfferSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "price", "stock", "activity"]
 
 
-# here the fields are hardwritten one by one so in case we
-# wanted to exclude something from the fields
 class ActivitySerializer(serializers.ModelSerializer):
     included_items = IncludedSerializer(
         many=True, read_only=True, source="included_set"
@@ -106,6 +111,15 @@ class ActivitySerializer(serializers.ModelSerializer):
     average_rating = serializers.FloatField(read_only=True)
     reviews_count = serializers.IntegerField(read_only=True)
 
+    # The critical fix: 
+    # We add subcategories + sublocations fields so the front-end sees them
+    subcategories = serializers.PrimaryKeyRelatedField(
+        queryset=SubCategory.objects.all(), many=True
+    )
+    sublocations = serializers.PrimaryKeyRelatedField(
+        queryset=SubLocation.objects.all(), many=True
+    )
+
     class Meta:
         model = Activity
         fields = [
@@ -120,6 +134,8 @@ class ActivitySerializer(serializers.ModelSerializer):
             "available_from",
             "available_to",
             "categories",
+            "subcategories",
+            "sublocations",
             "stock",
             "period",
             "days_off",
@@ -137,8 +153,8 @@ class ActivitySerializer(serializers.ModelSerializer):
             "catalogs",
             "map",
             "offers",
-            "average_rating",  # Included
-            "reviews_count",    # Included
+            "average_rating",
+            "reviews_count",
         ]
         read_only_fields = ["created_at"]
 
